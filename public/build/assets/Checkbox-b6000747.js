@@ -1,1 +1,0 @@
-import{j as o}from"./app-1abff991.js";function s({className:r="",...a}){return o.jsx("input",{...a,type:"checkbox",className:"rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-primary focus:ring-primary dark:focus:ring-primary dark:focus:ring-offset-gray-800 "+r})}export{s as C};

@@ -1,1 +1,0 @@
-import{j as r}from"./app-1abff991.js";import{S as o}from"./SuperAdminLayout-c7abdedd.js";import"./Sidebar-a7638bcc.js";import"./truncateText-0efa5ecd.js";import"./index.esm-d47dd636.js";import"./iconBase-d7a64011.js";import"./index.esm-7009594e.js";import"./index.esm-b9ae67de.js";function u(){return r.jsx(o,{children:"Dashboard SuperAdmin"})}export{u as default};
