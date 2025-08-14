@@ -1,0 +1,30 @@
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+/public_html
+/public_html2
+siakrabkotabaru.com
+/tests
+agus edit.zip
+public_html.zip
+public.zip
+siakrabkotabaru.com.zip
+siakrabk_db_dev_siakrabkotabaru.sql
+
+# IDE
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel Cache
+bootstrap/cache/*.php
+.env.backup
+.env.testing

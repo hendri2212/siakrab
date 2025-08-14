@@ -1,0 +1,1 @@
+function o(t){const n=new Date(t),e={year:"numeric",month:"long",day:"numeric",hour:"numeric",minute:"numeric",second:"numeric",timeZoneName:"short"};return new Intl.DateTimeFormat("id-ID",e).format(n)}function r(t){const n=new Date(t),e={weekday:"long",day:"numeric",month:"long",year:"numeric"};return new Intl.DateTimeFormat("id-ID",e).format(n)}export{r as a,o as f};

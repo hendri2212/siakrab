@@ -1,0 +1,1 @@
+import{j as r}from"./app-1abff991.js";import{N as t}from"./Navbar-d862277f.js";function n({auth:s,children:a}){return r.jsxs(r.Fragment,{children:[r.jsx(t,{auth:s}),r.jsx("main",{className:"mt-10 container mx-auto sm:px-20 px-5",children:a})]})}export{n as U};
