@@ -3,7 +3,6 @@ import { useMultistepForm } from "@/Hooks/useMultistepForm";
 import { Head, router, useForm } from "@inertiajs/react";
 import { toast } from "react-hot-toast";
 
-import GuestLayout from "@/Layouts/GuestLayout";
 import FormDataDiri from "./Partial/FormDataDiri";
 import FormDataUsaha from "./Partial/FormDataUsaha";
 import FormDataDetail from "./Partial/FormDataDetail";
@@ -165,59 +164,60 @@ export default function RegisterUMKM() {
     ]);
 
     return (
-        <GuestLayout>
-            <Head title="Daftar Pelaku Ekonomi Kreatif" />
+        <div className="flex justify-center">
+            <div className="mx-auto w-full max-w-[420px] px-4 flex flex-col min-h-screen">
+                <Head title="Daftar Pelaku Ekonomi Kreatif" />
 
-            <div className="mb-10">
-                <h1 className="font-bold text-2xl">Daftar Pelaku Ekonomi Kreatif</h1>
-                <p>Bergabunglah bersama kami, wujudkan kesuksesan bersama</p>
-            </div>
-
-            <form onSubmit={onSubmit}>
-                <section className="mb-10 flex justify-between">
-                    {stepsHeader.map((header, i) => (
-                        <div key={i} className="flex">
-                            <div
-                                className="w-fit cursor-pointer"
-                                onClick={() => goToStep(i)}
-                            >
-                                <div
-                                    className={`mx-auto rounded-full w-10 h-10 flex justify-center items-center font-semibold ${
-                                        currentStepIndex === i &&
-                                        !fulfilledFormIndex.includes(i)
-                                            ? "bg-black text-white"
-                                            : fulfilledFormIndex.includes(i)
-                                            ? "bg-primary text-white"
-                                            : "bg-gray-200 text-black"
-                                    }`}
-                                >
-                                    {i + 1}
-                                </div>
-                                <h1 className="text-sm mt-3 text-center sm:whitespace-nowrap">
-                                    {header}
-                                </h1>
-                            </div>
-
-                            {i !== stepsHeader.length - 1 && (
-                                <div className="h-[1px] sm:w-[6.5rem] w-[5.5rem] bg-gray-200 mt-5" />
-                            )}
-                        </div>
-                    ))}
-                </section>
-                <section>{currentStep}</section>
-                <div className="w-full mt-5">
-                    {processing ? (
-                        <Loading />
-                    ) : (
-                        <Button
-                            variant={"primary"}
-                            text={!isLastStep ? "Selanjutnya" : "Daftar"}
-                            icon={!isLastStep ? <BsArrowRight /> : <IoLogIn />}
-                            className="w-full"
-                        />
-                    )}
+                <div className="my-10">
+                    <h1 className="font-bold text-2xl">Daftar Pelaku Ekonomi Kreatif</h1>
+                    <p>Bergabunglah bersama kami, wujudkan kesuksesan bersama</p>
                 </div>
-            </form>
-        </GuestLayout>
+
+                <form onSubmit={onSubmit}>
+                    <section className="mb-10 flex justify-between">
+                        {stepsHeader.map((header, i) => (
+                            <div key={i} className="flex">
+                                <div
+                                    className="w-fit cursor-pointer"
+                                    onClick={() => goToStep(i)}
+                                >
+                                    <div
+                                        className={`mx-auto rounded-full w-10 h-10 flex justify-center items-center font-semibold ${currentStepIndex === i &&
+                                                !fulfilledFormIndex.includes(i)
+                                                ? "bg-black text-white"
+                                                : fulfilledFormIndex.includes(i)
+                                                    ? "bg-primary text-white"
+                                                    : "bg-gray-200 text-black"
+                                            }`}
+                                    >
+                                        {i + 1}
+                                    </div>
+                                    <h1 className="text-sm mt-3 text-center sm:whitespace-nowrap">
+                                        {header}
+                                    </h1>
+                                </div>
+
+                                {i !== stepsHeader.length - 1 && (
+                                    <div className="h-[1px] sm:w-[6.5rem] w-[5.5rem] bg-gray-200 mt-5" />
+                                )}
+                            </div>
+                        ))}
+                    </section>
+                    <section>{currentStep}</section>
+                    <div className="w-full mt-5">
+                        {processing ? (
+                            <Loading />
+                        ) : (
+                            <Button
+                                variant={"primary"}
+                                text={!isLastStep ? "Selanjutnya" : "Daftar"}
+                                icon={!isLastStep ? <BsArrowRight /> : <IoLogIn />}
+                                className="w-full"
+                            />
+                        )}
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }
