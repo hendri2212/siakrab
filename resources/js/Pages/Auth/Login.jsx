@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 
 import Checkbox from "@/Components/Checkbox";
-import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import TextInput from "@/Components/TextInput";
 import Button from "@/Components/Button";
@@ -29,7 +28,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
+        <div className="mx-auto w-full max-w-[420px] px-4">
             <Head title="Log in" />
 
             {status && (
@@ -38,8 +37,8 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
-            <div className="mb-10">
-                <h1 className="font-bold text-2xl">Login / Masuk</h1>
+            <div className="my-10">
+                <h1 className="font-bold text-2xl">Login Page</h1>
                 <p>
                     Silakan masuk ke akun Anda untuk mengakses layanan kami.
                     Anda juga dapat mendaftar secara gratis.
@@ -113,6 +112,6 @@ export default function Login({ status, canResetPassword }) {
                     </Link>
                 )}
             </form>
-        </GuestLayout>
+        </div>
     );
 }
