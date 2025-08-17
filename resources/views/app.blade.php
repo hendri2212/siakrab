@@ -17,7 +17,11 @@
     <!-- Scripts -->
     @routes
     @viteReactRefresh
-    @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
+    {{-- @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"]) --}}
+    @vite([
+        'resources/js/app.jsx?v=' . config('app.version'),
+        "resources/js/Pages/{$page['component']}.jsx?v=" . config('app.version'),
+    ])
     @inertiaHead
     <style>
         /* NOTE: Typical mobile logical widths are ~360–430px. We lock at 420px for consistent mobile look on desktop. */

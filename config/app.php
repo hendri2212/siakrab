@@ -187,4 +187,5 @@ return [
         'LaravelPwa' => \Ladumor\LaravelPwa\LaravelPwa::class,
     ])->toArray(),
 
+    'version' => env('APP_VERSION', '1.0.0'),
 ];
