@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{-- <base href="http://localhost:8000/"> --}}
     <meta name="theme-color" content="#00EAFF" />
     <link rel="apple-touch-icon" href="{{ asset('/icon.png') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
@@ -18,17 +17,27 @@
     <!-- Scripts -->
     @routes
     @viteReactRefresh
-    @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
+    @vite([
+        'resources/js/app.jsx?v=' . config('app.version'),
+        "resources/js/Pages/{$page['component']}.jsx?v=" . config('app.version'),
+    ])
     @inertiaHead
     <style>
         /* NOTE: Typical mobile logical widths are ~360–430px. We lock at 420px for consistent mobile look on desktop. */
         .app-container {
             max-width: 420px; /* lock to mobile width even on desktop */
-            width: 100%;       /* fill small screens */
+            width: 100%;
             margin: 0 auto;    /* center on wider screens */
-            padding: 0 auto;   /* horizontal breathing room */
-            background: #fff;  /* optional, keeps content on white card */
-            min-height: 100dvh;/* full viewport height on mobile */
+            padding: 0;        /* horizontal breathing room */
+            background: #f5f5f5;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background: #f5f5f5;
         }
 
         /* Allow sections that need to be full-bleed */
