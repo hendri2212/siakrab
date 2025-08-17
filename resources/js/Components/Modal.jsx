@@ -6,7 +6,7 @@ export default function Modal({
     show = false,
     maxWidth = "2xl",
     closeable = true,
-    onClose = () => {},
+    onClose = () => { },
 }) {
     const close = () => {
         if (closeable) {
@@ -15,11 +15,11 @@ export default function Modal({
     };
 
     const maxWidthClass = {
-        sm: "sm:max-w-sm",
-        md: "sm:max-w-md",
-        lg: "sm:max-w-lg",
-        xl: "sm:max-w-xl",
-        "2xl": "sm:max-w-2xl",
+        sm: "max-w-sm",
+        md: "max-w-md",
+        lg: "max-w-lg",
+        xl: "max-w-xl",
+        "2xl": "max-w-2xl",
     }[maxWidth];
 
     return (
@@ -27,7 +27,7 @@ export default function Modal({
             <Dialog
                 as="div"
                 id="modal"
-                className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center z-50 transform transition-all"
+                className="fixed inset-0 flex overflow-y-auto px-4 py-6 items-center z-50 transform transition-all"
                 onClose={close}
             >
                 <Transition.Child
@@ -52,7 +52,7 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <Dialog.Panel
-                        className={`mb-6 p-10 max-h-[88vh] overflow-auto bg-white dark:bg-gray-800 rounded-md shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass}`}
+                        className={`mb-6 p-4 max-h-[85vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-md shadow-xl transform transition-all w-full mx-auto ${maxWidthClass}`}
                     >
                         {children}
                     </Dialog.Panel>
