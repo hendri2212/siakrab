@@ -81,7 +81,7 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
             </section>
 
             {/* Fixed Bottom Navigation */}
-            <nav aria-label="Navigasi UMKM Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)]">
+            <nav aria-label="Navigasi UMKM Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)] rounded-t-lg">
                 <div className={`grid ${colsClass}`}>
                     {items.map((item) => {
                         const active = isActive(url, item.path);
