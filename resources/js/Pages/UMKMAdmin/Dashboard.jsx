@@ -16,7 +16,7 @@ import { HiUserGroup } from "react-icons/hi";
 import { listKategori as jenisUsahas } from "@/Constants";
 import { kecamatans } from "@/Constants";
 
-const INITAL_VALUE = {
+const INITIAL_VALUE = {
     namaUsaha: "",
     alamatUsaha: "",
     kecamatan: "",
@@ -26,6 +26,9 @@ const INITAL_VALUE = {
     jumlahTenagaKerja: "",
     noIjinUsaha: "",
     noNPWP: "",
+    produk: "",
+    merk: "",
+    alamatRumah: "",
 };
 
 export default function Dashboard({
@@ -34,7 +37,7 @@ export default function Dashboard({
     productCounts,
     categoryCounts,
 }) {
-    const { data, setData, post, processing, errors } = useForm(INITAL_VALUE);
+    const { data, setData, post, processing, errors } = useForm(INITIAL_VALUE);
     const [showModal, setShowModal] = useState(false);
     const [selectedUsaha, setSelectedUsaha] = useState(
         data.jenisUsaha || "Pilih Jenis Usaha"
@@ -66,7 +69,7 @@ export default function Dashboard({
     function handleUpdate(e) {
         e.preventDefault();
 
-        post(route("profileUMKM?.update"), {
+        post(route("profileUMKM.update"), {
             onSuccess: () => {
                 toast.success("Berhasil memperbarui profile UMKM");
                 setShowModal(false);
@@ -93,376 +96,389 @@ export default function Dashboard({
     return (
         <UMKMAdminLayout auth={auth}>
             <div>
-                <section className="mb-5 w-full grid grid-cols-3 gap-5">
-                    <div className="border-b-2 bg-[#9FFFFF] p-5 rounded-md relative">
+                <section className="mb-4 w-full grid grid-cols-3 gap-3">
+                    <div className="border-b-2 bg-[#9FFFFF] p-3 rounded-md relative">
                         <div className="absolute top-4 right-4">
                             <FaStore size={20} />
                         </div>
-                        <h1 className="font-bold text-4xl">{productCounts}</h1>
+                        <h1 className="font-bold text-2xl">{productCounts}</h1>
                         <p>Total Produk</p>
                     </div>
-                    <div className="border-b-2 bg-[#FBB2FF] p-5 rounded-md relative">
+                    <div className="border-b-2 bg-[#FBB2FF] p-3 rounded-md relative">
                         <div className="absolute top-4 right-4">
                             <FaThList size={20} />
                         </div>
-                        <h1 className="font-bold text-4xl">{categoryCounts}</h1>
+                        <h1 className="font-bold text-2xl">{categoryCounts}</h1>
                         <p>Sektor Produk </p>
                     </div>
-                    <div className="border-b-2 bg-[#daff7d] p-5 rounded-md relative">
+                    <div className="border-b-2 bg-[#daff7d] p-3 rounded-md relative">
                         <div className="absolute top-4 right-4">
                             <HiUserGroup size={20} />
                         </div>
-                        <h1 className="font-bold text-4xl">
+                        <h1 className="font-bold text-2xl">
                             {profileUMKM?.jumlah_tenaga_kerja}
                         </h1>
                         <p>Tenaga Kerja</p>
                     </div>
                 </section>
-                <section className="p-5 w-full border rounded-md flex gap-5">
-                    <table className="w-full mb-5">
+                <section className="p-3 w-full border rounded-md flex flex-col mb-3 bg-white">
+                    <table className="w-full text-sm">
                         <tbody>
-                            <tr className="border-b mb-3">
-                                <td className="py-3 font-semibold">
+                            <tr className="border-b">
+                                <td className="py-2 font-semibold">
                                     Nama Usaha
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.nama_usaha}
                                 </td>
                             </tr>
-                            <tr className="border-b mb-3">
-                                <td className="py-3 font-semibold">
+                            <tr className="border-b">
+                                <td className="py-2 font-semibold">
                                     Bidang Usaha
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.bidang_usaha}
                                 </td>
                             </tr>
-                            <tr className="border-b mb-3">
-                                <td className="py-3 font-semibold">
+                            <tr className="border-b">
+                                <td className="py-2 font-semibold">
                                     Jenis Usaha
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.jenis_usaha}
                                 </td>
                             </tr>
-                            <tr className="border-b mb-3">
-                                <td className="py-3 font-semibold">Produk</td>
+                            <tr className="border-b">
+                                <td className="py-2 font-semibold">Produk</td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">{profileUMKM?.produk}</td>
-                            </tr>
-                            <tr className="border-b mb-3">
-                                <td className="py-3 font-semibold">Merk</td>
-                                <td className="px-2">:</td>
-                                <td className="py-3">{profileUMKM?.merk}</td>
+                                <td className="py-2">{profileUMKM?.produk}</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                                <td className="py-2 font-semibold">Merk</td>
+                                <td className="px-2">:</td>
+                                <td className="py-2">{profileUMKM?.merk}</td>
+                            </tr>
+                            <tr>
+                                <td className="py-2 font-semibold">
                                     Kecamatan
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.kecamatan}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table className="w-full mb-5">
+                </section>
+                <section className="p-3 w-full border rounded-md flex flex-col bg-white">
+                    <table className="w-full text-sm">
                         <tbody>
                             <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                                <td className="py-2 font-semibold">
                                     Alamat Usaha
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.alamat_usaha}
                                 </td>
                             </tr>
                             <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                                <td className="py-2 font-semibold">
                                     Alamat Rumah
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.alamat_rumah}
                                 </td>
                             </tr>
                             <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                                <td className="py-2 font-semibold">
                                     Nomor Ijin Usaha
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">
+                                <td className="py-2">
                                     {profileUMKM?.no_ijin_usaha}
                                 </td>
                             </tr>
                             <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                                <td className="py-2 font-semibold">
                                     Nomor NPWP
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">{profileUMKM?.no_npwp}</td>
+                                <td className="py-2">{profileUMKM?.no_npwp}</td>
                             </tr>
-                            <tr className="border-b">
-                                <td className="py-3 font-semibold">
+                            <tr>
+                                <td className="py-2 font-semibold">
                                     Nomor Telepon
                                 </td>
                                 <td className="px-2">:</td>
-                                <td className="py-3">{profileUMKM?.telepon}</td>
+                                <td className="py-2">{profileUMKM?.telepon}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <Button text={"Edit"} onClick={handleEdit} />
+                    <button
+                        onClick={handleEdit}
+                        className="fixed bottom-20 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 active:scale-95 transition"
+                    >
+                        <FaEdit size={20} />
+                    </button>
                 </section>
                 <Modal
-                    maxWidth="lg"
+                    maxWidth="sm"
                     show={showModal}
                     onClose={() => setShowModal(false)}
                 >
-                    <h1 className="font-semibold text-xl mb-10 flex items-center gap-x-3">
-                        <FaEdit size={25} />
-                        <span>Edit Profile UMKM</span>
-                    </h1>
-                    <form
-                        onSubmit={handleUpdate}
-                        className="flex flex-col gap-5"
-                    >
-                        <div>
-                            <TextInput
-                                label="Nama Usaha"
-                                placeholder={"Nama Usaha"}
-                                name="namaUsaha"
-                                value={data.namaUsaha}
-                                required
-                                onChange={(e) =>
-                                    setData("namaUsaha", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["namaUsaha"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Bidang Usaha"
-                                placeholder={"Bidang Usaha"}
-                                name="namaUsaha"
-                                value={data.bidangUsaha}
-                                required
-                                onChange={(e) =>
-                                    setData("bidangUsaha", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["bidangUsaha"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Produk"
-                                placeholder={"Produk"}
-                                name="produk"
-                                value={data.produk}
-                                required
-                                onChange={(e) =>
-                                    setData("produk", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["produk"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Merk"
-                                placeholder={"Merk"}
-                                name="merk"
-                                value={data.merk}
-                                required
-                                onChange={(e) =>
-                                    setData("merk", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["merk"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                type="number"
-                                label="Jumlah Tenaga Kerja"
-                                placeholder={"Jumlah Tenaga Kerja"}
-                                name="jumlahTenagaKerja"
-                                value={data.jumlahTenagaKerja}
-                                required
-                                onChange={(e) =>
-                                    setData("jumlahTenagaKerja", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["jumlahTenagaKerja"]} />
-                        </div>
-                        <div>
-                            <SelectInput>
-                                <SelectInput.Trigger
-                                    label={"Jenis Usaha"}
-                                    selected={
-                                        selectedUsaha !== "Pilih Jenis Usaha"
+                    <div className="max-h-[75vh] overflow-y-auto">
+                        <h1 className="font-semibold text-lg mb-4 flex items-center gap-x-3 sticky top-0 bg-white z-10 py-2">
+                            <FaEdit size={22} />
+                            <span>Edit Profile UMKM</span>
+                        </h1>
+                        <form
+                            onSubmit={handleUpdate}
+                            className="flex flex-col gap-3 px-1"
+                        >
+                            <div>
+                                <TextInput
+                                    label="Nama Usaha"
+                                    placeholder={"Nama Usaha"}
+                                    name="namaUsaha"
+                                    value={data.namaUsaha}
+                                    required
+                                    onChange={(e) =>
+                                        setData("namaUsaha", e.target.value)
                                     }
-                                >
-                                    <div
-                                        className={
-                                            selectedUsaha ===
-                                            "Pilih Jenis Usaha"
-                                                ? "text-gray-500"
-                                                : ""
+                                />
+                                <InputError message={errors["namaUsaha"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Bidang Usaha"
+                                    placeholder={"Bidang Usaha"}
+                                    name="bidangUsaha"
+                                    value={data.bidangUsaha}
+                                    required
+                                    onChange={(e) =>
+                                        setData("bidangUsaha", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["bidangUsaha"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Produk"
+                                    placeholder={"Produk"}
+                                    name="produk"
+                                    value={data.produk}
+                                    required
+                                    onChange={(e) =>
+                                        setData("produk", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["produk"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Merk"
+                                    placeholder={"Merk"}
+                                    name="merk"
+                                    value={data.merk}
+                                    required
+                                    onChange={(e) =>
+                                        setData("merk", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["merk"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    type="number"
+                                    label="Jumlah Tenaga Kerja"
+                                    placeholder={"Jumlah Tenaga Kerja"}
+                                    name="jumlahTenagaKerja"
+                                    value={data.jumlahTenagaKerja}
+                                    required
+                                    onChange={(e) =>
+                                        setData("jumlahTenagaKerja", Number(e.target.value || 0))
+                                    }
+                                />
+                                <InputError message={errors["jumlahTenagaKerja"]} />
+                            </div>
+                            <div>
+                                <SelectInput>
+                                    <SelectInput.Trigger
+                                        label={"Jenis Usaha"}
+                                        selected={
+                                            selectedUsaha !== "Pilih Jenis Usaha"
                                         }
                                     >
-                                        {selectedUsaha}
-                                    </div>
-                                </SelectInput.Trigger>
-                                <SelectInput.Content
-                                    positionClass={"bottom-14"}
-                                >
-                                    <div className="max-h-[12rem] overflow-auto">
-                                        <ul>
-                                            {jenisUsahas.map((usaha, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
-                                                    onClick={() => {
-                                                        setSelectedUsaha(usaha);
-                                                        setData(
-                                                            "jenisUsaha",
-                                                            usaha
-                                                        );
-                                                    }}
-                                                >
-                                                    {usaha}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </SelectInput.Content>
-                            </SelectInput>
-                            <InputError message={errors["jenisUsaha"]} />
-                        </div>
-                        <div>
-                            <SelectInput>
-                                <SelectInput.Trigger
-                                    label={"Kecamatan"}
-                                    selected={
-                                        selectedKecamatan !== "Pilih Kecamatan"
-                                    }
-                                >
-                                    <div
-                                        className={
-                                            selectedKecamatan ===
-                                            "Pilih Kecamatan"
-                                                ? "text-gray-500"
-                                                : ""
+                                        <div
+                                            className={
+                                                selectedUsaha ===
+                                                    "Pilih Jenis Usaha"
+                                                    ? "text-gray-500"
+                                                    : ""
+                                            }
+                                        >
+                                            {selectedUsaha}
+                                        </div>
+                                    </SelectInput.Trigger>
+                                    <SelectInput.Content
+                                        positionClass={"bottom-14"}
+                                    >
+                                        <div className="max-h-[12rem] overflow-auto">
+                                            <ul>
+                                                {jenisUsahas.map((usaha, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
+                                                        onClick={() => {
+                                                            setSelectedUsaha(usaha);
+                                                            setData(
+                                                                "jenisUsaha",
+                                                                usaha
+                                                            );
+                                                        }}
+                                                    >
+                                                        {usaha}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </SelectInput.Content>
+                                </SelectInput>
+                                <InputError message={errors["jenisUsaha"]} />
+                            </div>
+                            <div>
+                                <SelectInput>
+                                    <SelectInput.Trigger
+                                        label={"Kecamatan"}
+                                        selected={
+                                            selectedKecamatan !== "Pilih Kecamatan"
                                         }
                                     >
-                                        {selectedKecamatan}
-                                    </div>
-                                </SelectInput.Trigger>
-                                <SelectInput.Content
-                                    positionClass={"bottom-14"}
-                                >
-                                    <div className="sm:max-h-[10rem] max-h-[12rem] overflow-auto">
-                                        <ul>
-                                            {kecamatans.map((kecamatan, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
-                                                    onClick={() => {
-                                                        setSelectedKecamatan(
-                                                            kecamatan
-                                                        );
-                                                        setData(
-                                                            "kecamatan",
-                                                            kecamatan
-                                                        );
-                                                    }}
-                                                >
-                                                    {kecamatan}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </SelectInput.Content>
-                            </SelectInput>
-                            <InputError message={errors["kecamatan"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Alamat Usaha"
-                                placeholder={"Alamat Usaha"}
-                                name="alamatUsaha"
-                                value={data.alamatUsaha}
-                                required
-                                onChange={(e) =>
-                                    setData("alamatUsaha", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["alamatUsaha"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Alamat Rumah"
-                                placeholder={"Alamat Rumah"}
-                                name="alamatRumah"
-                                value={data.alamatRumah}
-                                required
-                                onChange={(e) =>
-                                    setData("alamatRumah", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["alamatRumah"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Nomor Ijin Usaha"
-                                placeholder={"Nomor Ijin Usaha"}
-                                name="noIjinUsaha"
-                                value={data.noIjinUsaha}
-                                required
-                                onChange={(e) =>
-                                    setData("noIjinUsaha", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["noIjinUsaha"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                label="Nomor NPWP"
-                                placeholder={"Nomor NPWP"}
-                                name="noNPWP"
-                                value={data.noNPWP}
-                                required
-                                onChange={(e) =>
-                                    setData("noNPWP", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["noNPWP"]} />
-                        </div>
-                        <div>
-                            <TextInput
-                                type="text"
-                                label="No Telepon / WA"
-                                placeholder={"No Telepon / WA"}
-                                name="telepon"
-                                value={data.telepon}
-                                required
-                                onChange={(e) =>
-                                    setData("telepon", e.target.value)
-                                }
-                            />
-                            <InputError message={errors["telepon"]} />
-                        </div>
-                        {processing ? (
-                            <Loading />
-                        ) : (
-                            <Button
-                                variant={"primary"}
-                                text={"Simpan"}
-                                icon={<FaSave />}
-                            />
-                        )}
-                    </form>
+                                        <div
+                                            className={
+                                                selectedKecamatan ===
+                                                    "Pilih Kecamatan"
+                                                    ? "text-gray-500"
+                                                    : ""
+                                            }
+                                        >
+                                            {selectedKecamatan}
+                                        </div>
+                                    </SelectInput.Trigger>
+                                    <SelectInput.Content
+                                        positionClass={"bottom-14"}
+                                    >
+                                        <div className="max-h-[12rem] overflow-auto">
+                                            <ul>
+                                                {kecamatans.map((kecamatan, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
+                                                        onClick={() => {
+                                                            setSelectedKecamatan(
+                                                                kecamatan
+                                                            );
+                                                            setData(
+                                                                "kecamatan",
+                                                                kecamatan
+                                                            );
+                                                        }}
+                                                    >
+                                                        {kecamatan}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </SelectInput.Content>
+                                </SelectInput>
+                                <InputError message={errors["kecamatan"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Alamat Usaha"
+                                    placeholder={"Alamat Usaha"}
+                                    name="alamatUsaha"
+                                    value={data.alamatUsaha}
+                                    required
+                                    onChange={(e) =>
+                                        setData("alamatUsaha", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["alamatUsaha"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Alamat Rumah"
+                                    placeholder={"Alamat Rumah"}
+                                    name="alamatRumah"
+                                    value={data.alamatRumah}
+                                    required
+                                    onChange={(e) =>
+                                        setData("alamatRumah", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["alamatRumah"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Nomor Ijin Usaha"
+                                    placeholder={"Nomor Ijin Usaha"}
+                                    name="noIjinUsaha"
+                                    value={data.noIjinUsaha}
+                                    required
+                                    onChange={(e) =>
+                                        setData("noIjinUsaha", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["noIjinUsaha"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    label="Nomor NPWP"
+                                    placeholder={"Nomor NPWP"}
+                                    name="noNPWP"
+                                    value={data.noNPWP}
+                                    required
+                                    onChange={(e) =>
+                                        setData("noNPWP", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["noNPWP"]} />
+                            </div>
+                            <div>
+                                <TextInput
+                                    type="text"
+                                    label="No Telepon / WA"
+                                    placeholder={"No Telepon / WA"}
+                                    name="telepon"
+                                    value={data.telepon}
+                                    required
+                                    onChange={(e) =>
+                                        setData("telepon", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["telepon"]} />
+                            </div>
+                            {processing ? (
+                                <Loading />
+                            ) : (
+                                <div className="mt-2">
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                                    >
+                                        <FaSave />
+                                        Simpan
+                                    </button>
+                                </div>
+                            )}
+                        </form></div>
                 </Modal>
             </div>
         </UMKMAdminLayout>
