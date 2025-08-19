@@ -58,7 +58,7 @@ export function DataTable({ data }) {
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center pb-3">
                 <div className="w-[20rem]">
                     <TextInput
                         label="Search"

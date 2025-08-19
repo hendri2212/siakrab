@@ -100,7 +100,7 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
 
     return (
         <AdminLayout auth={auth}>
-            <div className="max-w-[75vw] overflow-auto">
+            <div className="w-full overflow-auto">
                 <DataTable data={listProductsUMKM} />
             </div>
 

@@ -4,7 +4,7 @@ export default function Authenticated({ user, header, children }) {
     return (
         <div>
             <Navbar auth={{ user }} />
-            <main className="container mx-auto sm:px-20 px-5">{children}</main>
+            <main className="mx-auto px-3">{children}</main>
         </div>
     );
 }

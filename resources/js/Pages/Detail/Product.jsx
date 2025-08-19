@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import 'swiper/css';
 import { formatPhone } from "@/Utils/formatPhone";
 
 import Button from "@/Components/Button";
@@ -18,65 +18,29 @@ export default function ProductDetail({ auth, productDetail }) {
     return (
         <>
             <Head title={productDetail?.nama} />
-
             <Navbar auth={auth} />
-
-            {/* <header
-                className="pt-14 pb-14 relative bg-dark text-white p-5"
-                // style={{
-                //     backgroundImage: `url("/images/hero/2.jpg")`,
-                //     backgroundSize: "cover",
-                // }}
-            >
-                <div className="absolute inset-0 bg-black/20" />
-                <div className="relative container mx-auto md:px-5 sm:px-20 text-center">
-                    <h1 className="sm:text-4xl text-2xl font-bold">
-                        {productDetail.pelaku_umkm.user.name}
-                    </h1>
-                    <p className="mb-3">(Pemilik Usaha)</p>
-                    <div className="w-fit mx-auto flex items-center gap-x-3 text-xl">
-                        <MdVerified className="text-primary" />
-                        {productDetail.pelaku_umkm.nama_usaha}
-                    </div>
-                </div>
-            </header> */}
-            <main className="container mx-auto sm:px-20 px-5 mb-10">
-                <div className="my-3">
-                    <Link
-                        href={route("productUMKM.find")}
-                        className="flex items-center gap-x-3 group"
-                    >
-                        <BsArrowLeft
-                            size={20}
-                            className="group-hover:-translate-x-1 duration-300"
-                        />
-                        <span>Kembali</span>
-                    </Link>
-                </div>
-
-                <section className="flex sm:flex-row flex-col sm:gap-10 gap-5">
-                    <div className="sm:w-[50vw] w-full sm:h-fit">
+            <main className="mx-auto px-3 mb-10">
+                <section className="flex flex-col gap-3">
+                    <div className="w-full h-fit">
                         {hoveredImage ? (
                             <img
                                 src={`/images/uploads/products/${hoveredImage}`}
                                 alt={hoveredImage}
-                                className="rounded-md w-full sm:h-[50vh] h-[30vh]"
+                                className="w-full h-[260px] rounded-xl object-cover"
                             />
                         ) : (
                             <img
                                 src={`/images/uploads/products/${productDetail?.thumbnail}`}
                                 alt={productDetail?.nama}
-                                className="rounded-md w-full sm:h-[50vh] h-[30vh]"
+                                className="w-full h-[260px] rounded-xl object-cover"
                             />
                         )}
 
-                        <div className="mt-3 sm:w-[40vw]">
+                        <div className="mt-3 w-full">
                             <Swiper
                                 slidesPerView={3}
                                 direction="horizontal"
                                 spaceBetween={10}
-                                modules={[Autoplay]}
-                                autoplay
                             >
                                 {images &&
                                     images.length > 0 &&
@@ -86,13 +50,14 @@ export default function ProductDetail({ auth, productDetail }) {
                                                 <img
                                                     src={`/images/uploads/products/${image}`}
                                                     alt={image}
-                                                    className="w-full sm:h-[8rem] h-[5rem] rounded-md cursor-pointer border-2 border-transparent hover:border-primary"
+                                                    className="w-full h-16 rounded-lg object-cover cursor-pointer border-2 border-transparent hover:border-primary"
                                                     onMouseEnter={() =>
                                                         setHoveredImage(image)
                                                     }
                                                     onMouseLeave={() =>
                                                         setHoveredImage(null)
                                                     }
+                                                    onClick={() => setHoveredImage(image)}
                                                 />
                                             </div>
                                         </SwiperSlide>
@@ -100,63 +65,61 @@ export default function ProductDetail({ auth, productDetail }) {
                             </Swiper>
                         </div>
                     </div>
-                    <div className="sm:w-[60vw] w-full h-fit border rounded-md p-5">
-                        <div className="mb-5 font-semibold flex sm:flex-row flex-col sm:items-center items-start gap-3">
-                            <span className="h-fit w-fit rounded-md py-0.5 px-3 bg-dark text-white">
-                                {productDetail?.kategori}
-                            </span>
-                            <span className="sm:text-2xl text-xl">
+                    <div className="w-full h-fit bg-white p-3 rounded-xl">
+                        <div className="font-semibold">
+                            <span className="text-xl leading-snug">
                                 {productDetail?.nama}
                             </span>
                         </div>
-                        <div>
+                        <div className="font-semibold">
                             {productDetail?.harga_fix !== "" &&
-                            productDetail?.harga_fix !== null ? (
-                                <span className="font-semibold sm:text-4xl text-2xl">
+                                productDetail?.harga_fix !== null ? (
+                                <span>
                                     {formatRupiah(productDetail?.harga_fix)}
                                 </span>
                             ) : (
-                                <span className="font-semibold sm:text-4xl text-2xl">
+                                <span>
                                     {formatRupiah(productDetail?.harga_start)}-
                                     {formatRupiah(productDetail?.harga_end)}
                                 </span>
                             )}
                         </div>
 
-                        <div className="mt-3 flex items-center gap-x-3 text-xl">
+                        {/* <div className="mt-3 flex items-center gap-2 text-base">
                             <MdVerified className="text-primary" />
                             {productDetail?.pelaku_umkm.nama_usaha}
-                        </div>
-                        <div className="font-light mt-3">
+                        </div> */}
+                        <div className="mt-3 text-sm leading-relaxed">
                             {productDetail?.deskripsi}
                         </div>
 
-                        <div className="mt-5 flex items-center gap-x-3">
+                        <div className="mt-5 flex items-center gap-3">
                             <a
+                                className="flex-1"
                                 href={`https://wa.me/${formatPhone(
                                     productDetail?.pelaku_umkm.telepon
-                                )}?text=Halo saya tertarik dengan produk ${
-                                    productDetail?.nama
-                                }.`}
+                                )}?text=Halo saya tertarik dengan produk ${productDetail?.nama
+                                    }.`}
                                 target="_blank"
                             >
                                 <Button
+                                    className="w-full justify-center rounded-xl"
                                     text={"Whatsapp"}
                                     icon={<IoLogoWhatsapp size={20} />}
                                 />
                             </a>
-                            <h1 className="font-semibold">
+                            {/* <h1 className="font-semibold text-sm">
                                 {productDetail?.pelaku_umkm.user.name}
-                            </h1>
+                            </h1> */}
                         </div>
-                        <div className="mt-10 text-xl text-label">
-                            <div className="flex items-center gap-x-3 mb-2">
-                                <MdLocationOn size={20} />
+                        <div className="mt-6 text-sm text-label">
+                            <div className="flex items-center gap-2 mb-2">
+                                {/* <MdLocationOn size={18} /> */}
                                 <p>{productDetail?.pelaku_umkm.alamat_usaha}</p>
                             </div>
-                            <span className="py-1 px-2 text-sm bg-gray-100 rounded-md text-black">
+                            {/* <span className="py-1 px-2 text-xs bg-gray-100 rounded-md text-black">
                                 Kec.{productDetail?.pelaku_umkm.kecamatan}
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                 </section>

@@ -1,6 +1,4 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
@@ -31,18 +29,18 @@ export default function UpdateProfileInformation({
     };
 
     return (
-        <section className={className}>
+        <section className={`w-full bg-white mx-auto p-3 rounded-lg ${className}`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
                     Profile Information
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
                     Update your account's profile information and email address.
                 </p>
             </header>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <form onSubmit={submit} className="mt-4 space-y-4">
                 <div>
                     {/* <InputLabel htmlFor="name" value="Name" /> */}
 
@@ -50,7 +48,7 @@ export default function UpdateProfileInformation({
                         id="name"
                         label="Nama"
                         placeholder="Nama"
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full rounded-xl"
                         value={data.name}
                         onChange={(e) => setData("name", e.target.value)}
                         required
@@ -69,7 +67,7 @@ export default function UpdateProfileInformation({
                         label="Email"
                         placeholder="Email"
                         type="email"
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full rounded-xl"
                         value={data.email}
                         onChange={(e) => setData("email", e.target.value)}
                         required
@@ -109,7 +107,7 @@ export default function UpdateProfileInformation({
                             label="Telepon / WA"
                             placeholder="Telepon / WA"
                             type="text"
-                            className="mt-1 block w-full"
+                            className="mt-1 block w-full rounded-xl"
                             value={data.telepon}
                             onChange={(e) => setData("telepon", e.target.value)}
                             required
@@ -119,7 +117,7 @@ export default function UpdateProfileInformation({
                     </div>
                 )}
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     {processing ? (
                         <Loading />
                     ) : (
@@ -127,6 +125,8 @@ export default function UpdateProfileInformation({
                             variant={"primary"}
                             text={"Simpan"}
                             icon={<FaSave />}
+                            className="px-4 rounded-xl"
+                            type="submit"
                         />
                     )}
 

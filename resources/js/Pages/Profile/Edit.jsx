@@ -16,22 +16,20 @@ export default function Edit({ auth, mustVerifyEmail, status, pelakuUMKM }) {
         >
             <Head title="Profile" />
 
-            <main className="my-10 grid sm:grid-cols-2 grid-cols-1 gap-5">
-                <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-md border">
-                    <UpdateProfileInformationForm
-                        auth={auth}
-                        mustVerifyEmail={mustVerifyEmail}
-                        status={status}
-                        pelakuUMKM={pelakuUMKM}
-                        className="max-w-xl"
-                    />
-                </div>
+            <main className="my-3 grid grid-cols-1 gap-3">
+                <UpdateProfileInformationForm
+                    auth={auth}
+                    mustVerifyEmail={mustVerifyEmail}
+                    status={status}
+                    pelakuUMKM={pelakuUMKM}
+                    className="max-w-xl"
+                />
 
-                <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-md border">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-md border">
                     <UpdatePasswordForm className="max-w-xl" />
                 </div>
 
-                <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-md border">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-md border">
                     <DeleteUserForm className="max-w-xl" />
                 </div>
             </main>

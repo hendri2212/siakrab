@@ -56,13 +56,12 @@ export default function AdminLayout({ children, cta }) {
     return (
         <>
             <Head title="Admin" />
-
             {/* page container with bottom padding to avoid being overlapped by the fixed bottom nav */}
             <section className="min-h-screen w-full px-3 pb-24">
-                <header className="py-4 mb-5 flex justify-between">
+                <header className="py-3 mb-3 flex justify-between">
                     <div>
                         <h1 className="font-bold text-xl">{headerTitle}</h1>
-                        <p>{url}</p>
+                        {/* <p>{url}</p> */}
                     </div>
                     <div>{cta}</div>
                 </header>
@@ -70,10 +69,7 @@ export default function AdminLayout({ children, cta }) {
             </section>
 
             {/* Fixed Bottom Navigation */}
-            <nav
-                aria-label="Navigasi Admin"
-                className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)] rounded-t-lg"
-            >
+            <nav aria-label="Navigasi Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)] rounded-t-lg">
                 <div className={`grid ${colsClass}`}>
                     {primaryItems.map((item) => {
                         const active = isActive(url, item.path);

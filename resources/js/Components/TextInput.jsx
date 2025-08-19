@@ -24,7 +24,7 @@ export default forwardRef(function TextInput(
             <input
                 {...props}
                 type={type}
-                className={`w-full px-5 border-gray-300 focus:border-primary focus:ring-primary rounded-md ${
+                className={`w-full px-5 border-gray-300 focus:border-primary focus:ring-primary rounded-xl ${
                     focus && "placeholder-transparent"
                 } ${className}`}
                 ref={input}

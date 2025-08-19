@@ -60,20 +60,17 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
 
     const colsClass = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5" }[items.length] || "grid-cols-4";
 
-    const isActive = (currentUrl, itemPath) => {
-        // consider active when url starts with the item path
-        return currentUrl.startsWith(itemPath);
-    };
+    const isActive = (currentUrl, itemPath) => { return currentUrl.startsWith(itemPath); };
 
     return (
         <>
             <Head title="UMKM Admin" />
             {/* page container with bottom padding to avoid being overlapped by the fixed bottom nav */}
             <section className="min-h-screen w-full px-3 pb-24">
-                <header className="py-4 mb-5 flex justify-between">
+                <header className="py-3 mb-3 flex justify-between">
                     <div>
                         <h1 className="font-bold text-xl">{headerTitle}</h1>
-                        <p>{url}</p>
+                        {/* <p>{url}</p> */}
                     </div>
                     <div>{cta}</div>
                 </header>

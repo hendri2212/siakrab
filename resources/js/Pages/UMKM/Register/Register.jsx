@@ -168,13 +168,13 @@ export default function RegisterUMKM() {
             <div className="mx-auto w-full max-w-[420px] px-4 flex flex-col min-h-screen">
                 <Head title="Daftar Pelaku Ekonomi Kreatif" />
 
-                <div className="my-10">
+                <div className="my-3">
                     <h1 className="font-bold text-2xl">Daftar Pelaku Ekonomi Kreatif</h1>
                     <p>Bergabunglah bersama kami, wujudkan kesuksesan bersama</p>
                 </div>
 
                 <form onSubmit={onSubmit}>
-                    <section className="mb-10 flex justify-between">
+                    <section className="my-5 flex justify-between">
                         {stepsHeader.map((header, i) => (
                             <div key={i} className="flex">
                                 <div
@@ -212,7 +212,7 @@ export default function RegisterUMKM() {
                                 variant={"primary"}
                                 text={!isLastStep ? "Selanjutnya" : "Daftar"}
                                 icon={!isLastStep ? <BsArrowRight /> : <IoLogIn />}
-                                className="w-full"
+                                className="w-full rounded-xl"
                             />
                         )}
                     </div>

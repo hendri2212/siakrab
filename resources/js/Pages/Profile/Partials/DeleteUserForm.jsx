@@ -66,7 +66,7 @@ export default function DeleteUserForm({ className = "" }) {
                 text={"Hapus Akun"}
                 icon={<FaTrash />}
                 onClick={confirmUserDeletion}
-                className="border-red-500 bg-red-500 text-white"
+                className="border-red-500 bg-red-500 text-white rounded-xl"
             />
             {/* <DangerButton onClick={confirmUserDeletion}>
                 Delete Account
@@ -129,7 +129,7 @@ export default function DeleteUserForm({ className = "" }) {
                                     type={"submit"}
                                     text={"Hapus Akun"}
                                     icon={<FaTrash />}
-                                    className="w-full border-red-500 bg-red-500 text-white"
+                                    className="w-full border-red-500 bg-red-500 text-white rounded-xl"
                                 />
                             </>
                         )}

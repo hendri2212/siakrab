@@ -37,7 +37,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
-            <div className="my-10">
+            <div className="my-3">
                 <h1 className="font-bold text-2xl">Login Page</h1>
                 <p>
                     Silakan masuk ke akun Anda untuk mengakses layanan kami.
@@ -53,7 +53,7 @@ export default function Login({ status, canResetPassword }) {
                         name="email"
                         value={data.email}
                         placeholder="Email"
-                        className="mt-1 block w-full"
+                        className="block w-full rounded-xl"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData("email", e.target.value)}
@@ -69,7 +69,7 @@ export default function Login({ status, canResetPassword }) {
                         name="password"
                         value={data.password}
                         placeholder="Password"
-                        className="mt-1 block w-full"
+                        className="block w-full rounded-xl"
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
@@ -99,7 +99,7 @@ export default function Login({ status, canResetPassword }) {
                         variant={"primary"}
                         text={"Login"}
                         icon={<IoLogIn />}
-                        className="w-full"
+                        className="w-full rounded-xl"
                     />
                 )}
 

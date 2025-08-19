@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { slug } from "@/Utils/formatSlug";
 import { TruncateText } from "@/Utils/truncateText";
@@ -31,24 +31,99 @@ export default function Products({
         query: query || "",
     });
 
+    // ===== Infinite Scroll State & Helpers =====
+    const [items, setItems] = useState(results?.data || []);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const bottomRef = useRef(null);
+
+    // Build next-page URL while preserving current query & kategori
+    function buildNextUrl(rawUrl, queryStr, kategoriArr) {
+        if (!rawUrl) return null;
+        const hasQuery = rawUrl.includes("?");
+        const url = new URL(rawUrl, window.location.origin);
+        // Ensure query
+        if (queryStr && !url.searchParams.has("query")) {
+            url.searchParams.set("query", queryStr);
+        }
+        // Ensure kategori (comma-joined)
+        const joinedKategori = Array.isArray(kategoriArr) ? kategoriArr.join(",") : (kategoriArr || "");
+        if (joinedKategori && !url.searchParams.has("kategori")) {
+            url.searchParams.set("kategori", joinedKategori);
+        }
+        return hasQuery ? url.pathname + url.search : url.pathname + url.search;
+    }
+
+    // Initialize list only when the core search inputs change (query/kategori), not when page changes
+    useEffect(() => {
+        setItems(results?.data || []);
+        setNextUrl(buildNextUrl(results?.next_page_url || null, query, selectedKategori));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query, JSON.stringify(queryKategori)]);
+
+    // Loader for fetching next page via Inertia
+    function loadMore() {
+        if (!nextUrl || isLoadingMore) return;
+        setIsLoadingMore(true);
+        get(nextUrl, {
+            preserveScroll: true,
+            preserveState: true,
+            only: ["results"],
+            onSuccess: (page) => {
+                const next = page?.props?.results;
+                if (next?.data?.length) {
+                    setItems((prev) => [...prev, ...next.data]);
+                }
+                setNextUrl(buildNextUrl(next?.next_page_url || null, query, selectedKategori));
+            },
+            onFinish: () => setIsLoadingMore(false),
+        });
+    }
+
+    // Observe sentinel to auto-load more when near bottom
+    useEffect(() => {
+        if (!bottomRef.current) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting) {
+                    loadMore();
+                }
+            },
+            { root: null, rootMargin: "300px", threshold: 0 }
+        );
+        observer.observe(bottomRef.current);
+        return () => observer.disconnect();
+    }, [bottomRef.current, nextUrl, isLoadingMore]);
+
     function filterByKategori(kategori) {
         const cleanedKategori = cleanseKategori(kategori);
-        console.log(cleanedKategori);
-
-        const updatedKategori = queryKategori.includes(cleanedKategori)
+        const isSelected = queryKategori.includes(cleanedKategori);
+        const updatedKategori = isSelected
             ? selectedKategori.filter((item) => item !== cleanedKategori)
             : [...selectedKategori, cleanedKategori];
 
         setSelectedKategori(updatedKategori);
+        setItems([]);
 
         get(
             route("productUMKM.find", {
                 _query: {
                     page: 1,
                     kategori: updatedKategori.join(","),
-                    query: query,
+                    query: data.query || query || "",
                 },
-            })
+            }),
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ["results"],
+                onSuccess: (page) => {
+                    const next = page?.props?.results;
+                    setItems(next?.data || []);
+                    setNextUrl(buildNextUrl(next?.next_page_url || null, data.query || query || "", updatedKategori));
+                },
+            }
         );
     }
 
@@ -58,15 +133,25 @@ export default function Products({
 
     function handleSearch(e) {
         e.preventDefault();
-
+        setItems([]);
         get(
             route("productUMKM.find", {
                 _query: {
                     page: 1,
-                    kategori: queryKategori,
-                    query: query,
+                    kategori: selectedKategori.join(","),
+                    query: data.query || "",
                 },
-            })
+            }),
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ["results"],
+                onSuccess: (page) => {
+                    const next = page?.props?.results;
+                    setItems(next?.data || []);
+                    setNextUrl(buildNextUrl(next?.next_page_url || null, data.query || "", selectedKategori));
+                },
+            }
         );
     }
 
@@ -77,54 +162,7 @@ export default function Products({
     return (
         <UserLayout auth={auth}>
             <Head title={query || "Produk UMKM"} />
-
-            <main className="flex sm:flex-row flex-col gap-5">
-                <div className="sm:hidden block">
-                    <form onSubmit={handleSearch} className="flex gap-x-3">
-                        <TextInput
-                            label="Search"
-                            placeholder="Search produk..."
-                            value={data.query}
-                            className
-                            onChange={(e) => setData("query", e.target.value)}
-                        />
-                        <Button icon={<FaSearch />} />
-                    </form>
-                </div>
-                <section className="sm:sticky top-20 sm:w-[30vw] h-fit rounded-md border p-3">
-                    <div
-                        className="font-semibold flex items-center justify-between cursor-pointer"
-                        onClick={() => setShowKategori((show) => !show)}
-                    >
-                        <span>Kategori</span>
-                        <BsChevronDown
-                            className={`${
-                                showKategori ? "rotate-180" : ""
-                            } duration-300`}
-                        />
-                    </div>
-                    {showKategori && (
-                        <ul className="mt-3 flex flex-col gap-y-3">
-                            {listKategori.map((kategori, i) => (
-                                <li
-                                    key={i}
-                                    className="flex items-center gap-x-3"
-                                >
-                                    <Checkbox
-                                        checked={selectedKategori.includes(
-                                            cleanseKategori(kategori)
-                                        )}
-                                        onChange={() =>
-                                            filterByKategori(kategori)
-                                        }
-                                    />{" "}
-                                    {kategori}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </section>
-
+            <main className="flex flex-col gap-5 max-w-[420px] mx-auto w-full">
                 <div className="w-full">
                     {selectedKategori.length > 0 && (
                         <div className="mb-2 flex gap-x-3 h-fit max-w-[100vw] overflow-auto pb-3">
@@ -165,8 +203,8 @@ export default function Products({
                                     </span>
                                 </div>
                             </div> */}
-                            <div className="mb-5 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                                {results.data.map((product) => (
+                            <div className="mb-5 grid grid-cols-3 gap-2">
+                                {items.map((product) => (
                                     <div key={product.id}>
                                         <Link
                                             href={route(
@@ -174,43 +212,43 @@ export default function Products({
                                                 product.nama
                                             )}
                                         >
-                                            <div className="relative rounded-md border h-fit overflow-hidden group">
+                                            <div className="relative rounded-lg h-fit overflow-hidden group bg-white p-2 shadow-sm hover:shadow">
                                                 <img
                                                     src={`/images/uploads/products/${product.thumbnail}`}
                                                     alt="produk"
-                                                    className="rounded-t-md sm:h-[10rem] h-[14rem] overflow-auto w-full group-hover:scale-110 duration-300"
+                                                    className="rounded-t-lg h-[8rem] w-full group-hover:scale-110 duration-300"
                                                 />
                                                 <div className="absolute top-5 left-5 flex gap-x-2">
                                                     <span className="rounded-md py-0.5 px-3 text-sm bg-dark text-white">
                                                         {product.kategori}
                                                     </span>
                                                 </div>
-                                                <div className="p-3 min-h-[10rem] relative">
-                                                    <h2 className="text-gray-500">
+                                                <div className="min-h-[8rem] relative">
+                                                    <h2 className="font-bold [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical] overflow-hidden min-h-[2.5rem]">
                                                         {TruncateText(
                                                             product.nama,
                                                             32
                                                         )}
                                                     </h2>
-                                                    <div>
+                                                    <div className="min-h-[2.5rem] flex items-center flex-wrap leading-tight">
                                                         {product.harga_fix !==
                                                             null &&
                                                         product.harga_fix !==
                                                             "" ? (
-                                                            <h1 className="font-bold text-lg">
+                                                            <span className="text-gray-500">
                                                                 {formatRupiah(
                                                                     product.harga_fix
                                                                 )}
-                                                            </h1>
+                                                            </span>
                                                         ) : (
                                                             <>
-                                                                <span className="font-bold text-lg">
+                                                                <span className="text-gray-500 text-sm">
                                                                     {formatRupiah(
                                                                         product.harga_start
                                                                     )}
                                                                 </span>
                                                                 <span> - </span>
-                                                                <span className="font-bold text-lg">
+                                                                <span className="text-gray-500 text-sm">
                                                                     {formatRupiah(
                                                                         product.harga_end
                                                                     )}
@@ -219,24 +257,19 @@ export default function Products({
                                                         )}
                                                     </div>
                                                     <div className="mt-3">
-                                                        <span className="rounded-md py-0.5 px-2 text-sm bg-gray-100 text-dark">
+                                                        {/* <span className="rounded-md py-0.5 px-2 text-sm bg-gray-100 text-dark">
                                                             Kec.
                                                             {
                                                                 product
                                                                     .pelaku_umkm
                                                                     .kecamatan
                                                             }
-                                                        </span>
-                                                        <p className="mt-2 text-sm flex items-center gap-x-2">
-                                                            <MdVerified
-                                                                size={20}
-                                                                className="text-primary"
-                                                            />
-                                                            {
-                                                                product
-                                                                    .pelaku_umkm
-                                                                    .nama_usaha
-                                                            }
+                                                        </span> */}
+                                                        <p className="mt-2 text-sm flex items-center gap-x-2 h-5">
+                                                            <MdVerified size={20} className="text-primary"/>
+                                                            <span className="truncate">
+                                                                {product.pelaku_umkm.nama_usaha}
+                                                            </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -245,80 +278,11 @@ export default function Products({
                                     </div>
                                 ))}
                             </div>
-                            <div className="w-fit mx-auto flex items-center gap-x-3 mb-10">
-                                {results.links.map((link, i) => {
-                                    if (i === 0)
-                                        return (
-                                            <Link
-                                                key={i}
-                                                href={
-                                                    results.prev_page_url +
-                                                    `&query=${query}&kategori=${queryKategori}`
-                                                }
-                                                className="hover:-translate-x-2 duration-300"
-                                            >
-                                                <span
-                                                    key={i}
-                                                    className={`cursor-pointer ${
-                                                        results.current_page ===
-                                                        1
-                                                            ? "hidden"
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    <FaChevronLeft />
-                                                </span>
-                                            </Link>
-                                        );
-                                    if (i === results.links.length - 1)
-                                        return (
-                                            <Link
-                                                key={i}
-                                                href={
-                                                    results.next_page_url +
-                                                    `&query=${query}&kategori=${queryKategori}`
-                                                }
-                                                className={`hover:translate-x-2 duration-300 ${
-                                                    results.current_page ===
-                                                    results.last_page
-                                                        ? "hidden"
-                                                        : ""
-                                                }`}
-                                            >
-                                                <span className="cursor-pointer">
-                                                    <FaChevronRight />
-                                                </span>
-                                            </Link>
-                                        );
-                                    else
-                                        return (
-                                            <Link
-                                                key={i}
-                                                href={
-                                                    link.url +
-                                                    `&query=${query}&kategori=${queryKategori}`
-                                                }
-                                                className={`${
-                                                    results.current_page !=
-                                                    link.label
-                                                        ? "hover:scale-110 duration-300"
-                                                        : "pointer-events-none"
-                                                } `}
-                                            >
-                                                <span
-                                                    key={i}
-                                                    className={`cursor-pointer ${
-                                                        results.current_page ==
-                                                        link.label
-                                                            ? "text-primary"
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    {link.label}
-                                                </span>
-                                            </Link>
-                                        );
-                                })}
+                            {/* Sentinel for infinite scroll */}
+                            <div ref={bottomRef} className="h-8 w-full flex items-center justify-center mt-2 mb-10">
+                                {isLoadingMore && (
+                                    <span className="text-xs text-gray-500">Memuat…</span>
+                                )}
                             </div>
                         </section>
                     )}
