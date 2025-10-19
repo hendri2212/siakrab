@@ -163,6 +163,7 @@ export default function Products({
         <UserLayout auth={auth}>
             <Head title={query || "Produk UMKM"} />
             <main className="flex flex-col gap-5 max-w-[420px] mx-auto w-full">
+            {/* <main className={`flex flex-col ${(!results?.data || results.data.length === 0) ? '' : 'gap-5'} max-w-[420px] mx-auto w-full`}></main> */}
                 <div className="w-full">
                     {selectedKategori.length > 0 && (
                         <div className="mb-2 flex gap-x-3 h-fit max-w-[100vw] overflow-auto pb-3">
@@ -185,11 +186,16 @@ export default function Products({
                             ))}
                         </div>
                     )}
-
-                    {!results.data.length ? (
-                        <h1 className="w-full text-2xl font-semibold">
-                            Produk tidak ditemukan.
-                        </h1>
+                    {(!results?.data || results.data.length === 0) ? (
+                    // {!results.data.length ? (
+                        // <section className="w-full">
+                            <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center text-gray-500">
+                                Produk tidak ditemukan.
+                            </div>
+                        // {/* </section> */}
+                        // <h1 className="w-full text-2xl font-semibold">
+                        //     Produk tidak ditemukan.
+                        // </h1>
                     ) : (
                         <section className="w-full">
                             {/* <div className="mb-5">

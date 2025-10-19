@@ -208,36 +208,74 @@ class ProductUMKMController extends Controller
 
     public function find(Request $req)
     {
-        $query = $req->query('query', '');
+        $query = trim(strtolower($req->query('query', '')));
         $kategoris = $req->query('kategori', []);
 
+        // Normalizations for fuzzy matching
+        $normalized = preg_replace('/\s+/', ' ', $query); // collapse spaces
+        $queryNoVowels = preg_replace('/[aiueo]/', '', $normalized); // remove vowels
+        $tokens = array_filter(explode(' ', $normalized), fn($t) => strlen($t) > 0);
+
         $queryBuilder = ProductUMKM::with('pelakuUmkm')
-            ->where('nama', 'like', '%' . $query . '%');
+            ->where(function ($q) use ($normalized, $tokens, $queryNoVowels) {
+                // 1) Direct LIKE on full phrase
+                $q->whereRaw('LOWER(nama) LIKE ?', ['%' . $normalized . '%'])
 
+                // 2) SOUNDEX-based fuzzy match (helps for misspellings)
+                ->orWhereRaw('SOUNDEX(nama) = SOUNDEX(?)', [$normalized])
+
+                // 3) All tokens must appear (order-insensitive)
+                ->orWhere(function ($qq) use ($tokens) {
+                    foreach ($tokens as $t) {
+                        $qq->whereRaw('LOWER(nama) LIKE ?', ['%' . $t . '%']);
+                    }
+                })
+
+                // 4) Vowel-stripped fuzzy: match consonant skeletons (e.g., "mi greng" ≈ "mie goreng")
+                ->orWhereRaw("
+                    REPLACE(
+                        REPLACE(
+                            REPLACE(
+                                REPLACE(
+                                    REPLACE(LOWER(nama),'a',''),'i',''),'u',''),'e',''),'o',''
+                    ) LIKE ?
+                ", ['%' . $queryNoVowels . '%']);
+            });
+
+        // Ensure kategoris is an array
         $kategoris = is_array($kategoris) ? $kategoris : explode(',', $kategoris);
-
-
         if (!empty($kategoris)) {
             $queryBuilder->whereIn('kategori', $kategoris);
         }
 
-        $paginator = $queryBuilder->latest()->paginate(12);
+        // Rank results: exact/like matches first, then soundex, then consonant-skeleton, then others by recency
+        $queryBuilder->orderByRaw("
+            CASE
+                WHEN LOWER(nama) LIKE ? THEN 0
+                WHEN SOUNDEX(nama) = SOUNDEX(?) THEN 1
+                WHEN REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nama),'a',''),'i',''),'u',''),'e',''),'o','') LIKE ? THEN 2
+                ELSE 3
+            END ASC
+        ", ['%' . $normalized . '%', $normalized, '%' . $queryNoVowels . '%'])
+        ->orderBy('created_at', 'desc');
 
-        $results = new Collection($paginator->items());
+        // Paginate
+        $paginator = $queryBuilder->paginate(12);
 
-        // dd($results);
-        
-        if (!$results->isEmpty()) {
-            foreach ($results as $product) {
-                if (!is_null($product['harga_end'])) {
-                    $minPrice = $results->min('harga_start');
-                    $maxPrice = $results->max('harga_end');
-                }else {
-                    $minPrice = $results->min('harga_fix');
-                    $maxPrice = $results->max('harga_fix');
-                }
+        // Compute price range robustly from the current page items
+        $results = collect($paginator->items());
+
+        if ($results->isNotEmpty()) {
+            // Determine whether the items use range pricing or fixed; compute min/max accordingly
+            $hasRange = $results->contains(fn($p) => !is_null($p->harga_end) && !is_null($p->harga_start));
+
+            if ($hasRange) {
+                $minPrice = $results->min(fn($p) => $p->harga_start ?? $p->harga_fix);
+                $maxPrice = $results->max(fn($p) => $p->harga_end ?? $p->harga_fix);
+            } else {
+                $minPrice = $results->min('harga_fix');
+                $maxPrice = $results->max('harga_fix');
             }
-            
         } else {
             $minPrice = null;
             $maxPrice = null;
@@ -245,10 +283,10 @@ class ProductUMKMController extends Controller
 
         return Inertia::render('Finding/Products', [
             'results' => $paginator,
-            'query' => $query,
+            'query' => $req->query('query', ''),
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
-            'queryKategori' => $kategoris, // Gunakan array yang sudah dibersihkan
+            'queryKategori' => $kategoris,
         ]);
     }
 }
