@@ -70,9 +70,14 @@ Route::get('/finding/gallery', [GalleryController::class, 'find'])->name("galler
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // UMKM product actions (like & save)
+    Route::post('/umkm/products/{id}/like', [ProductUMKMController::class, 'toggleLike'])->name('umkm.products.like');
+    Route::post('/umkm/products/{id}/save', [ProductUMKMController::class, 'toggleSave'])->name('umkm.products.save');
 });
 
 Route::middleware('guest')->group(function () {
@@ -151,6 +156,9 @@ Route::middleware(['user.role:umkmAdmin'])->group(function () {
     Route::post('/umkm-admin/products-management/store', [ProductUMKMController::class, 'store'])->name('productUMKM.store');
     Route::post('/umkm-admin/products-management/update/{id}', [ProductUMKMController::class, 'update'])->name('productUMKM.update');
     Route::post('/umkm-admin/products-management/delete/{id}', [ProductUMKMController::class, 'delete'])->name('productUMKM.delete');
+
+    Route::get('/umkm-admin/likes', [ProductUMKMController::class, 'likes'])->name('productUMKM.likes');
+    Route::get('/umkm-admin/saved', [ProductUMKMController::class, 'saved'])->name('productUMKM.saved');
 
     Route::post('/umkm-admin/profile-umkm/update', [ProfileUMKMController::class, 'update'])->name('profileUMKM.update');
 });

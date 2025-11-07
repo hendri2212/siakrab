@@ -13,8 +13,15 @@ class ProductUMKM extends Model
     protected $guarded = ['id'];
     protected $casts = ['images'=> 'array'];
 
-    public function pelakuUmkm()
-    {
+    public function pelakuUmkm() {
         return $this->belongsTo(PelakuUMKM::class, 'pelaku_umkm_id');
+    }
+
+    public function likes() {
+        return $this->hasMany(likedProducts::class, 'product_id');
+    }
+
+    public function saves() {
+        return $this->hasMany(ProductSave::class, 'product_id');
     }
 }

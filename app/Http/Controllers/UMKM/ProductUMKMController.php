@@ -5,6 +5,8 @@ namespace App\Http\Controllers\UMKM;
 use App\Http\Controllers\Controller;
 use App\Models\PelakuUMKM;
 use App\Models\ProductUMKM;
+use App\Models\ProductLike;
+use App\Models\ProductSave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -194,17 +196,126 @@ class ProductUMKMController extends Controller
         return redirect()->back();
     }
 
-    public function detail($slug)
-    {
-        // $namaProduct = str_replace("-", " ", $slug);
+    public function toggleLike($id) {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
 
-        $productDetail = ProductUMKM::where('nama', $slug)->with('pelakuUmkm.user')->first();
+        $product = ProductUMKM::findOrFail($id);
 
-        return Inertia::render("Detail/Product", [
-            'productDetail' => $productDetail
+        $existing = $product->likes()->where('user_id', $user->id)->first();
+
+        if ($existing) {
+            // un-like
+            $existing->delete();
+            $isLiked = false;
+        } else {
+            // like
+            $product->likes()->create([
+                'user_id' => $user->id,
+            ]);
+            $isLiked = true;
+        }
+
+        // hitung ulang
+        $likesCount = $product->likes()->count();
+
+        return response()->json([
+            'is_liked' => $isLiked,
+            'likes_count' => $likesCount,
         ]);
     }
 
+    public function toggleSave($id) {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $product = ProductUMKM::findOrFail($id);
+
+        $existing = $product->saves()->where('user_id', $user->id)->first();
+
+        if ($existing) {
+            // un-save
+            $existing->delete();
+            $isSaved = false;
+        } else {
+            // save
+            $product->saves()->create([
+                'user_id' => $user->id,
+            ]);
+            $isSaved = true;
+        }
+
+        $savesCount = $product->saves()->count();
+
+        return response()->json([
+            'is_saved' => $isSaved,
+            'saves_count' => $savesCount,
+        ]);
+    }
+
+    public function detail($slug) {
+        $productDetail = ProductUMKM::where('nama', $slug)
+            ->with(['pelakuUmkm.user'])
+            ->withCount(['likes', 'saves'])
+            ->first();
+
+        if ($productDetail) {
+            $productDetail->increment('view_count');
+            $productDetail->refresh();
+        }
+
+        $isLiked = false;
+        $isSaved = false;
+
+        if ($productDetail && Auth::check()) {
+            $userId = Auth::id();
+            // pastikan relasi likes() dan saves() sudah didefinisikan di model ProductUMKM
+            $isLiked = $productDetail->likes()->where('user_id', $userId)->exists();
+            $isSaved = $productDetail->saves()->where('user_id', $userId)->exists();
+        }
+
+        return Inertia::render("Detail/Product", [
+            'productDetail' => $productDetail,
+            'is_liked' => $isLiked,
+            'is_saved' => $isSaved,
+        ]);
+    }
+
+    public function likes() {
+        $userId = Auth::id();
+        $pelakuUMKM = PelakuUMKM::where('user_id', $userId)->firstOrFail();
+
+        // hanya ambil produk yang memang punya like
+        $products = ProductUMKM::with(['likes.user'])
+            ->where('pelaku_umkm_id', $pelakuUMKM->id)
+            ->whereHas('likes')
+            ->latest()
+            ->get();
+
+        return Inertia::render('UMKMAdmin/Likes', [
+            'products' => $products,
+        ]);
+    }
+
+    public function saved() {
+        $userId = Auth::id();
+        $pelakuUMKM = PelakuUMKM::where('user_id', $userId)->firstOrFail();
+
+        // hanya ambil produk yang memang disimpan (save)
+        $products = ProductUMKM::with(['saves.user'])
+            ->where('pelaku_umkm_id', $pelakuUMKM->id)
+            ->whereHas('saves')
+            ->latest()
+            ->get();
+
+        return Inertia::render('UMKMAdmin/Saved', [
+            'products' => $products,
+        ]);
+    }
 
     public function find(Request $req)
     {

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('harga_fix')->nullable();
             $table->json('detail')->nullable();
             $table->bigInteger('pelaku_umkm_id');
+            $table->unsignedBigInteger('view_count')->default(0);
             $table->timestamps();
         });
     }

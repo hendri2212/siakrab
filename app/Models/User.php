@@ -69,4 +69,14 @@ class User extends Authenticatable
             null => 'umkmAdmin.dashboard'
         };
     }
+
+    public function likedProducts() {
+        return $this->belongsToMany(ProductsUmkm::class, 'product_likes', 'user_id', 'product_id')
+            ->withTimestamps();
+    }
+
+    public function savedProducts() {
+        return $this->belongsToMany(ProductsUmkm::class, 'product_saves', 'user_id', 'product_id')
+            ->withTimestamps();
+    }
 }
