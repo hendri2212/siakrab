@@ -221,11 +221,7 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
     }, [croppedThumbnail]);
 
     return (
-        <UMKMAdminLayout
-            auth={auth}
-            cta={null}
-            x
-        >
+        <UMKMAdminLayout auth={auth} cta={null} x >
             <div className="w-full overflow-auto">
                 <DataTable data={listProductsUMKM} />
             </div>
@@ -239,7 +235,7 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
                            bg-gradient-to-r from-blue-600 to-indigo-600"
             >
                 <BsPlusLg size={18} />
-                <span className="text-sm font-semibold">Tambah Produk</span>
+                <span className="text-sm font-semibold">Produk</span>
             </button>
 
             <Modal

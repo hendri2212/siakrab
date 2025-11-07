@@ -1,7 +1,7 @@
 import { Head, usePage, Link } from "@inertiajs/react";
 
 import { MdDashboard, MdLogout } from "react-icons/md";
-import { FaStore, FaUser } from "react-icons/fa";
+import { FaStore, FaUser, FaHeart, FaBookmark } from "react-icons/fa";
 
 const sidebarItems = [
     {
@@ -13,6 +13,16 @@ const sidebarItems = [
         name: "Produk",
         path: "/umkm-admin/products-management",
         icon: <FaStore size={22} />, // a bit smaller for bottom nav
+    },
+    {
+        name: "Likes",
+        path: "/umkm-admin/likes",
+        icon: <FaHeart size={22} />,
+    },
+    {
+        name: "Saved",
+        path: "/umkm-admin/saved",
+        icon: <FaBookmark size={22} />,
     },
     {
         name: "Profil",
@@ -58,7 +68,7 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
 
     const items = auth?.user?.role === "umkmAdmin" ? sidebarItems : sidebarItems2;
 
-    const colsClass = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5" }[items.length] || "grid-cols-4";
+    const colsClass = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5" }[items.length] || "grid-cols-6";
 
     const isActive = (currentUrl, itemPath) => { return currentUrl.startsWith(itemPath); };
 

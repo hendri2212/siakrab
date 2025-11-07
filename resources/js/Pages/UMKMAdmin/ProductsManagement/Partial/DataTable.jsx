@@ -13,6 +13,79 @@ import { Button } from "@/components/ui/button";
 import TextInput from "@/Components/TextInput";
 import { columns } from "./Columns";
 
+// --- Fuzzy helpers and global filter ---
+const normalize = (str) => (str || "").toString().toLowerCase().trim();
+const levenshtein = (a, b) => {
+    a = normalize(a);
+    b = normalize(b);
+    const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j - 1] + cost
+            );
+        }
+    }
+    return matrix[a.length][b.length];
+};
+
+const fuzzyGlobalFilter = (row, columnId, filterValue) => {
+    const query = normalize(filterValue);
+    if (!query) return true;
+    
+    // Get all column values from the row
+    const searchableValues = Object.keys(row.original || {}).map(key => {
+        const val = row.original[key];
+        return normalize(val);
+    }).filter(Boolean);
+    
+    // Search through all values
+    for (const text of searchableValues) {
+        if (!text) continue;
+        
+        // 1) Normal contains
+        if (text.includes(query)) return true;
+        
+        // 2) Fuzzy match per-word
+        const words = text.split(/\s+/);
+        for (const word of words) {
+            if (!word) continue;
+            if (word.includes(query)) return true;
+            
+            const wordDist = levenshtein(word, query);
+            const lenDiff = Math.abs(word.length - query.length);
+            
+            let maxDistance;
+            if (query.length <= 3) {
+                maxDistance = 1;
+            } else if (query.length <= 5) {
+                maxDistance = 2;
+            } else {
+                maxDistance = 3;
+            }
+            
+            if (wordDist <= maxDistance && lenDiff <= maxDistance) {
+                return true;
+            }
+        }
+        
+        // 3) Fuzzy match entire text
+        const textDist = levenshtein(text, query);
+        const textLenDiff = Math.abs(text.length - query.length);
+        const maxDistForText = query.length <= 3 ? 1 : (query.length <= 5 ? 2 : 3);
+        
+        if (textDist <= maxDistForText && textLenDiff <= maxDistForText) {
+            return true;
+        }
+    }
+    return false;
+};
+
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
@@ -28,6 +101,7 @@ export function DataTable({ data }) {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyGlobalFilter,
         state: {
             sorting,
             columnFilters,
@@ -59,19 +133,9 @@ export function DataTable({ data }) {
 
     const resolve = (row, keys, defaultVal = "") => {
         for (const k of keys) {
-            try {
-                // Try via react-table accessor
-                const v = row.getValue?.(k);
-                if (v !== undefined && v !== null && String(v).trim() !== "") return coerceString(v);
-            } catch (_e) { }
-            // Try raw original object
-            if (
-                row.original &&
-                row.original[k] !== undefined &&
-                row.original[k] !== null &&
-                String(row.original[k]).trim() !== ""
-            ) {
-                return coerceString(row.original[k]);
+            const val = row.original?.[k];
+            if (val !== undefined && val !== null && String(val).trim() !== "") {
+                return coerceString(val);
             }
         }
         return defaultVal;
