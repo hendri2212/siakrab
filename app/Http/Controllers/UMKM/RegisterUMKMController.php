@@ -36,8 +36,14 @@ class RegisterUMKMController extends Controller
                 'jumlahTenagaKerja' => 'required',
                 'noIjinUsaha' => 'required',
                 'noNPWP' => 'required',
+                'nik' => 'required|digits:16|unique:pelaku_umkms,nik',
+                'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
+            $fotoKtpPath = null;
+            if ($req->hasFile('foto_ktp')) {
+                $fotoKtpPath = $req->file('foto_ktp')->store('ktp', 'public');
+            }
 
             $user = User::create([
                 'name' => $validatedData['nama'],
@@ -55,7 +61,9 @@ class RegisterUMKMController extends Controller
                 'jumlah_tenaga_kerja' => $validatedData['jumlahTenagaKerja'],
                 'no_ijin_usaha' => $validatedData['noIjinUsaha'],
                 'no_npwp' => $validatedData['noNPWP'],
-                'user_id' => $user->id
+                'nik' => $validatedData['nik'],
+                'foto_ktp' => $fotoKtpPath,
+                'user_id' => $user->id,
             ]);
 
             DB::commit();

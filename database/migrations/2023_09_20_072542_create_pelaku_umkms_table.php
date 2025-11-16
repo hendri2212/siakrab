@@ -23,7 +23,11 @@ return new class extends Migration
             $table->string('jumlah_tenaga_kerja');
             $table->string('no_ijin_usaha');
             $table->string('no_npwp');
-            $table->bigInteger('user_id');
+            $table->string('nik', 16)->nullable()->unique();
+            $table->string('foto_ktp')->nullable();
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->cascadeOnDelete();
             $table->timestamps();
         });
     }
