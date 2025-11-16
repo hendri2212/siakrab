@@ -231,14 +231,6 @@ Hubungi penjual: https://wa.me/${formatPhone(productDetail?.pelaku_umkm.telepon)
                             </div>
                         </div>
 
-                        {/* <div className="mt-3 flex items-center gap-2 text-base">
-                            <MdVerified className="text-primary" />
-                            {productDetail?.pelaku_umkm.nama_usaha}
-                        </div> */}
-                        <div className="mt-3 text-sm leading-relaxed">
-                            {productDetail?.deskripsi}
-                        </div>
-
                         <div className="mt-5 flex items-center gap-3">
                             <a
                                 className="flex-1"
@@ -266,9 +258,17 @@ Hubungi penjual: https://wa.me/${formatPhone(productDetail?.pelaku_umkm.telepon)
                                 />
                             </button>
                         </div>
-                        <div className="mt-6 text-sm text-label">
+                        <div className="mt-3 text-sm leading-relaxed">
+                            {productDetail?.deskripsi}
+                        </div>
+
+                        <div className="mt-6 flex items-center gap-2 text-base">
+                            <MdVerified className="text-primary" />
+                            {productDetail?.pelaku_umkm.nama_usaha}
+                        </div>
+                        <div className="text-sm text-label">
                             <div className="flex items-center gap-2 mb-2">
-                                {/* <MdLocationOn size={18} /> */}
+                                <MdLocationOn size={18} />
                                 <p>{productDetail?.pelaku_umkm.alamat_usaha}</p>
                             </div>
                             {/* <span className="py-1 px-2 text-xs bg-gray-100 rounded-md text-black">
