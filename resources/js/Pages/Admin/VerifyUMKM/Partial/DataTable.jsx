@@ -31,6 +31,7 @@ import { columns } from "./Columns";
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
+    const [selectedRow, setSelectedRow] = React.useState(null);
     const [columnVisibility, setColumnVisibility] = React.useState();
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
@@ -70,7 +71,7 @@ export function DataTable({ data }) {
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
+                        <Button variant="outline" className="ml-auto rounded-xl py-5 ml-2">
                             Columns <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -95,6 +96,54 @@ export function DataTable({ data }) {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+            {selectedRow && (
+                <div className="mb-4 p-4 border rounded-md bg-white shadow-sm">
+                    <h3 className="text-lg font-semibold mb-3">
+                        Data Verifikasi
+                    </h3>
+                    <div className="space-y-1 text-sm">
+                        {selectedRow.nama_usaha && (
+                            <p className="flex flex-col">
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    Nama Usaha
+                                </span>
+                                <span className="text-sm">
+                                    {selectedRow.nama_usaha}
+                                </span>
+                            </p>
+                        )}
+                        {selectedRow.nama && (
+                            <p className="flex flex-col">
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    Nama Pemilik
+                                </span>
+                                <span className="text-sm">
+                                    {selectedRow.nama}
+                                </span>
+                            </p>
+                        )}
+                        {selectedRow.nik && (
+                            <p className="flex flex-col">
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    NIK
+                                </span>
+                                <span className="text-sm">
+                                    {selectedRow.nik}
+                                </span>
+                            </p>
+                        )}
+                    </div>
+                    {selectedRow.foto_ktp && (
+                        <div className="mt-3">
+                            <img
+                                src={`/storage/${selectedRow.foto_ktp}`}
+                                alt="Foto KTP"
+                                className="max-w-xs rounded-md border"
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -124,6 +173,8 @@ export function DataTable({ data }) {
                                     data-state={
                                         row.getIsSelected() && "selected"
                                     }
+                                    className="cursor-pointer hover:bg-muted"
+                                    onClick={() => setSelectedRow(row.original)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

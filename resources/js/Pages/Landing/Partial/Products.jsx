@@ -67,18 +67,33 @@ export default function Products({ listProdukUMKM, queryKategori }) {
         });
     }
 
-    // Observe the sentinel at the bottom to auto-load the next page
+    // Observe the sentinel at the bottom to auto-load the next page (with improved options and fallback)
     useEffect(() => {
-        if (!bottomRef.current) return;
-        const observer = new IntersectionObserver((entries) => {
-            const entry = entries[0];
-            if (entry.isIntersecting) {
-                loadMore();
+        const target = bottomRef.current;
+        if (!target || !nextUrl) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const [entry] = entries;
+                if (entry.isIntersecting) {
+                    loadMore();
+                }
+            },
+            {
+                root: null,
+                // Trigger sedikit sebelum elemen benar-benar masuk viewport (lebih aman di berbagai device)
+                rootMargin: "150px 0px",
+                threshold: 0.1,
             }
-        }, { root: null, rootMargin: "0px", threshold: 1.0 });
-        observer.observe(bottomRef.current);
-        return () => observer.disconnect();
-    }, [bottomRef.current, nextUrl, isLoadingMore]);
+        );
+
+        observer.observe(target);
+
+        return () => {
+            observer.unobserve(target);
+            observer.disconnect();
+        };
+    }, [nextUrl, isLoadingMore]);
 
     function filterByKategori(kategori) {
         setSelectedKategori(kategori);
@@ -323,10 +338,21 @@ export default function Products({ listProdukUMKM, queryKategori }) {
                         </div>
 
 
-                        {/* Sentinel for infinite scroll */}
-                        <div ref={bottomRef} className="h-8 w-full flex items-center justify-center mt-3">
-                            {isLoadingMore && (
-                                <span className="text-xs text-gray-500">Memuat...</span>
+                        {/* Sentinel & fallback for infinite scroll */}
+                        <div className="w-full flex flex-col items-center justify-center mt-3 gap-2">
+                            <div ref={bottomRef} className="h-10 w-full flex items-center justify-center">
+                                {isLoadingMore && (
+                                    <span className="text-xs text-gray-500">Memuat...</span>
+                                )}
+                            </div>
+                            {nextUrl && !isLoadingMore && (
+                                <button
+                                    type="button"
+                                    onClick={loadMore}
+                                    className="px-3 py-1 text-xs rounded-full border border-gray-300 bg-white text-gray-700 shadow-sm active:scale-[0.98]"
+                                >
+                                    Muat lebih banyak
+                                </button>
                             )}
                         </div>
                     </>

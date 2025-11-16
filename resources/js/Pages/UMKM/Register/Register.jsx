@@ -25,6 +25,8 @@ const INITAL_VALUE = {
     jumlahTenagaKerja: "",
     noIjinUsaha: "",
     noNPWP: "",
+    nik: "",
+    foto_ktp: null,
 };
 
 export default function RegisterUMKM() {
@@ -43,6 +45,8 @@ export default function RegisterUMKM() {
         jumlahTenagaKerja,
         noIjinUsaha,
         noNPWP,
+        nik,
+        foto_ktp,
     } = data;
     const [fulfilledFormIndex, setFulfilledFormIndex] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
@@ -122,7 +126,8 @@ export default function RegisterUMKM() {
             bidangUsaha != "" &&
             jumlahTenagaKerja != "" &&
             noIjinUsaha != "" &&
-            noNPWP != "";
+            noNPWP != "" &&
+            nik != "";
 
         if (firstFormFulfilled) {
             setFulfilledFormIndex((currentIndexs) => [...currentIndexs, 0]);
@@ -161,6 +166,8 @@ export default function RegisterUMKM() {
         jumlahTenagaKerja,
         noIjinUsaha,
         noNPWP,
+        nik,
+        foto_ktp,
     ]);
 
     return (
