@@ -10,7 +10,8 @@ import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
 import Loading from "@/Components/Loading";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { FaEdit, FaSave, FaStore, FaThList } from "react-icons/fa";
+import { FaEdit, FaPen, FaSave, FaStore, FaThList } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
 import { HiUserGroup } from "react-icons/hi";
 
 import { listKategori as jenisUsahas } from "@/Constants";
@@ -221,264 +222,274 @@ export default function Dashboard({
                     </table>
                     <button
                         onClick={handleEdit}
-                        className="fixed bottom-20 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 active:scale-95 transition"
+                        className="fixed right-4 bottom-[5.5rem] z-[45] flex items-center gap-2 rounded-full px-4 py-3 text-white shadow-lg active:scale-95 transition bg-gradient-to-r from-blue-600 to-indigo-600"
                     >
-                        <FaEdit size={20} />
+                        <FaPen size={18} />
+                        <span className="text-sm font-semibold">Profile</span>
                     </button>
                 </section>
                 <Modal
-                    maxWidth="sm"
+                    maxWidth="lg"
                     show={showModal}
                     onClose={() => setShowModal(false)}
                 >
-                    <div className="max-h-[75vh] overflow-y-auto">
-                        <h1 className="font-semibold text-lg mb-4 flex items-center gap-x-3 sticky top-0 bg-white z-10 py-2">
-                            <FaEdit size={22} />
-                            <span>Edit Profile UMKM</span>
-                        </h1>
-                        <form
-                            onSubmit={handleUpdate}
-                            className="flex flex-col gap-3 px-1"
-                        >
-                            <div>
-                                <TextInput
-                                    label="Nama Usaha"
-                                    placeholder={"Nama Usaha"}
-                                    name="namaUsaha"
-                                    value={data.namaUsaha}
-                                    required
-                                    onChange={(e) =>
-                                        setData("namaUsaha", e.target.value)
+                    <div className="sticky top-0 bg-white z-10">
+                        <div className="mx-auto h-1.5 w-10 rounded-full bg-gray-300 mt-2" />
+                        <div className="flex items-center justify-between px-4 py-3 border-b">
+                            <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                <FaEdit size={18} />
+                                <span>Edit Profile UMKM</span>
+                            </h1>
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                aria-label="Tutup"
+                                className="p-2 -mr-2"
+                            >
+                                <MdClose size={20} />
+                            </button>
+                        </div>
+                    </div>
+                    <form onSubmit={handleUpdate} className="flex flex-col gap-3 px-1">
+                        <div>
+                            <TextInput
+                                label="Nama Usaha"
+                                placeholder={"Nama Usaha"}
+                                name="namaUsaha"
+                                value={data.namaUsaha}
+                                required
+                                onChange={(e) =>
+                                    setData("namaUsaha", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["namaUsaha"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Bidang Usaha"
+                                placeholder={"Bidang Usaha"}
+                                name="bidangUsaha"
+                                value={data.bidangUsaha}
+                                required
+                                onChange={(e) =>
+                                    setData("bidangUsaha", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["bidangUsaha"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Produk"
+                                placeholder={"Produk"}
+                                name="produk"
+                                value={data.produk}
+                                required
+                                onChange={(e) =>
+                                    setData("produk", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["produk"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Merk"
+                                placeholder={"Merk"}
+                                name="merk"
+                                value={data.merk}
+                                required
+                                onChange={(e) =>
+                                    setData("merk", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["merk"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                type="number"
+                                label="Jumlah Tenaga Kerja"
+                                placeholder={"Jumlah Tenaga Kerja"}
+                                name="jumlahTenagaKerja"
+                                value={data.jumlahTenagaKerja}
+                                required
+                                onChange={(e) =>
+                                    setData("jumlahTenagaKerja", Number(e.target.value || 0))
+                                }
+                            />
+                            <InputError message={errors["jumlahTenagaKerja"]} />
+                        </div>
+                        <div>
+                            <SelectInput>
+                                <SelectInput.Trigger
+                                    label={"Jenis Usaha"}
+                                    selected={
+                                        selectedUsaha !== "Pilih Jenis Usaha"
                                     }
-                                />
-                                <InputError message={errors["namaUsaha"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Bidang Usaha"
-                                    placeholder={"Bidang Usaha"}
-                                    name="bidangUsaha"
-                                    value={data.bidangUsaha}
-                                    required
-                                    onChange={(e) =>
-                                        setData("bidangUsaha", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["bidangUsaha"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Produk"
-                                    placeholder={"Produk"}
-                                    name="produk"
-                                    value={data.produk}
-                                    required
-                                    onChange={(e) =>
-                                        setData("produk", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["produk"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Merk"
-                                    placeholder={"Merk"}
-                                    name="merk"
-                                    value={data.merk}
-                                    required
-                                    onChange={(e) =>
-                                        setData("merk", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["merk"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    type="number"
-                                    label="Jumlah Tenaga Kerja"
-                                    placeholder={"Jumlah Tenaga Kerja"}
-                                    name="jumlahTenagaKerja"
-                                    value={data.jumlahTenagaKerja}
-                                    required
-                                    onChange={(e) =>
-                                        setData("jumlahTenagaKerja", Number(e.target.value || 0))
-                                    }
-                                />
-                                <InputError message={errors["jumlahTenagaKerja"]} />
-                            </div>
-                            <div>
-                                <SelectInput>
-                                    <SelectInput.Trigger
-                                        label={"Jenis Usaha"}
-                                        selected={
-                                            selectedUsaha !== "Pilih Jenis Usaha"
+                                >
+                                    <div
+                                        className={
+                                            selectedUsaha ===
+                                                "Pilih Jenis Usaha"
+                                                ? "text-gray-500"
+                                                : ""
                                         }
                                     >
-                                        <div
-                                            className={
-                                                selectedUsaha ===
-                                                    "Pilih Jenis Usaha"
-                                                    ? "text-gray-500"
-                                                    : ""
-                                            }
-                                        >
-                                            {selectedUsaha}
-                                        </div>
-                                    </SelectInput.Trigger>
-                                    <SelectInput.Content
-                                        positionClass={"bottom-14"}
-                                    >
-                                        <div className="max-h-[12rem] overflow-auto">
-                                            <ul>
-                                                {jenisUsahas.map((usaha, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
-                                                        onClick={() => {
-                                                            setSelectedUsaha(usaha);
-                                                            setData(
-                                                                "jenisUsaha",
-                                                                usaha
-                                                            );
-                                                        }}
-                                                    >
-                                                        {usaha}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </SelectInput.Content>
-                                </SelectInput>
-                                <InputError message={errors["jenisUsaha"]} />
-                            </div>
-                            <div>
-                                <SelectInput>
-                                    <SelectInput.Trigger
-                                        label={"Kecamatan"}
-                                        selected={
-                                            selectedKecamatan !== "Pilih Kecamatan"
+                                        {selectedUsaha}
+                                    </div>
+                                </SelectInput.Trigger>
+                                <SelectInput.Content
+                                    positionClass={"bottom-14"}
+                                >
+                                    <div className="max-h-[12rem] overflow-auto">
+                                        <ul>
+                                            {jenisUsahas.map((usaha, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
+                                                    onClick={() => {
+                                                        setSelectedUsaha(usaha);
+                                                        setData(
+                                                            "jenisUsaha",
+                                                            usaha
+                                                        );
+                                                    }}
+                                                >
+                                                    {usaha}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </SelectInput.Content>
+                            </SelectInput>
+                            <InputError message={errors["jenisUsaha"]} />
+                        </div>
+                        <div>
+                            <SelectInput>
+                                <SelectInput.Trigger
+                                    label={"Kecamatan"}
+                                    selected={
+                                        selectedKecamatan !== "Pilih Kecamatan"
+                                    }
+                                >
+                                    <div
+                                        className={
+                                            selectedKecamatan ===
+                                                "Pilih Kecamatan"
+                                                ? "text-gray-500"
+                                                : ""
                                         }
                                     >
-                                        <div
-                                            className={
-                                                selectedKecamatan ===
-                                                    "Pilih Kecamatan"
-                                                    ? "text-gray-500"
-                                                    : ""
-                                            }
-                                        >
-                                            {selectedKecamatan}
-                                        </div>
-                                    </SelectInput.Trigger>
-                                    <SelectInput.Content
-                                        positionClass={"bottom-14"}
-                                    >
-                                        <div className="max-h-[12rem] overflow-auto">
-                                            <ul>
-                                                {kecamatans.map((kecamatan, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
-                                                        onClick={() => {
-                                                            setSelectedKecamatan(
-                                                                kecamatan
-                                                            );
-                                                            setData(
-                                                                "kecamatan",
-                                                                kecamatan
-                                                            );
-                                                        }}
-                                                    >
-                                                        {kecamatan}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </SelectInput.Content>
-                                </SelectInput>
-                                <InputError message={errors["kecamatan"]} />
+                                        {selectedKecamatan}
+                                    </div>
+                                </SelectInput.Trigger>
+                                <SelectInput.Content
+                                    positionClass={"bottom-14"}
+                                >
+                                    <div className="max-h-[12rem] overflow-auto">
+                                        <ul>
+                                            {kecamatans.map((kecamatan, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
+                                                    onClick={() => {
+                                                        setSelectedKecamatan(
+                                                            kecamatan
+                                                        );
+                                                        setData(
+                                                            "kecamatan",
+                                                            kecamatan
+                                                        );
+                                                    }}
+                                                >
+                                                    {kecamatan}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </SelectInput.Content>
+                            </SelectInput>
+                            <InputError message={errors["kecamatan"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Alamat Usaha"
+                                placeholder={"Alamat Usaha"}
+                                name="alamatUsaha"
+                                value={data.alamatUsaha}
+                                required
+                                onChange={(e) =>
+                                    setData("alamatUsaha", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["alamatUsaha"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Alamat Rumah"
+                                placeholder={"Alamat Rumah"}
+                                name="alamatRumah"
+                                value={data.alamatRumah}
+                                required
+                                onChange={(e) =>
+                                    setData("alamatRumah", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["alamatRumah"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Nomor Ijin Usaha"
+                                placeholder={"Nomor Ijin Usaha"}
+                                name="noIjinUsaha"
+                                value={data.noIjinUsaha}
+                                required
+                                onChange={(e) =>
+                                    setData("noIjinUsaha", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["noIjinUsaha"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                label="Nomor NPWP"
+                                placeholder={"Nomor NPWP"}
+                                name="noNPWP"
+                                value={data.noNPWP}
+                                required
+                                onChange={(e) =>
+                                    setData("noNPWP", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["noNPWP"]} />
+                        </div>
+                        <div>
+                            <TextInput
+                                type="text"
+                                label="No Telepon / WA"
+                                placeholder={"No Telepon / WA"}
+                                name="telepon"
+                                value={data.telepon}
+                                required
+                                onChange={(e) =>
+                                    setData("telepon", e.target.value)
+                                }
+                            />
+                            <InputError message={errors["telepon"]} />
+                        </div>
+                        {processing ? (
+                            <Loading />
+                        ) : (
+                            <div className="mt-2">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                                >
+                                    <FaSave />
+                                    Simpan
+                                </button>
                             </div>
-                            <div>
-                                <TextInput
-                                    label="Alamat Usaha"
-                                    placeholder={"Alamat Usaha"}
-                                    name="alamatUsaha"
-                                    value={data.alamatUsaha}
-                                    required
-                                    onChange={(e) =>
-                                        setData("alamatUsaha", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["alamatUsaha"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Alamat Rumah"
-                                    placeholder={"Alamat Rumah"}
-                                    name="alamatRumah"
-                                    value={data.alamatRumah}
-                                    required
-                                    onChange={(e) =>
-                                        setData("alamatRumah", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["alamatRumah"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Nomor Ijin Usaha"
-                                    placeholder={"Nomor Ijin Usaha"}
-                                    name="noIjinUsaha"
-                                    value={data.noIjinUsaha}
-                                    required
-                                    onChange={(e) =>
-                                        setData("noIjinUsaha", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["noIjinUsaha"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    label="Nomor NPWP"
-                                    placeholder={"Nomor NPWP"}
-                                    name="noNPWP"
-                                    value={data.noNPWP}
-                                    required
-                                    onChange={(e) =>
-                                        setData("noNPWP", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["noNPWP"]} />
-                            </div>
-                            <div>
-                                <TextInput
-                                    type="text"
-                                    label="No Telepon / WA"
-                                    placeholder={"No Telepon / WA"}
-                                    name="telepon"
-                                    value={data.telepon}
-                                    required
-                                    onChange={(e) =>
-                                        setData("telepon", e.target.value)
-                                    }
-                                />
-                                <InputError message={errors["telepon"]} />
-                            </div>
-                            {processing ? (
-                                <Loading />
-                            ) : (
-                                <div className="mt-2">
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
-                                    >
-                                        <FaSave />
-                                        Simpan
-                                    </button>
-                                </div>
-                            )}
-                        </form></div>
+                        )}
+                    </form>
                 </Modal>
             </div>
         </UMKMAdminLayout>
