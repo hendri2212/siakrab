@@ -48,7 +48,7 @@
 </head>
 
 <body class="antialiased">
-    <div class="app-container">
+    <div class="app-container pt-6 sm:pt-8">
         @inertia
     </div>
 
