@@ -46,11 +46,10 @@ export default function Welcome({
                         >
                             <AiFillInstagram
                                 size={40}
-                                className={`${
-                                    isScrolled
-                                        ? "sm:text-primary text-white"
-                                        : "text-white"
-                                }`}
+                                className={`${isScrolled
+                                    ? "sm:text-primary text-white"
+                                    : "text-white"
+                                    }`}
                             />
                         </a>
                         <a
@@ -59,11 +58,10 @@ export default function Welcome({
                         >
                             <RiWhatsappFill
                                 size={40}
-                                className={`${
-                                    isScrolled
-                                        ? "sm:text-primary text-white"
-                                        : "text-white"
-                                }`}
+                                className={`${isScrolled
+                                    ? "sm:text-primary text-white"
+                                    : "text-white"
+                                    }`}
                             />
                         </a>
                         <a
@@ -72,11 +70,10 @@ export default function Welcome({
                         >
                             <FaFacebook
                                 size={40}
-                                className={`${
-                                    isScrolled
-                                        ? "sm:text-primary text-white"
-                                        : "text-white"
-                                }`}
+                                className={`${isScrolled
+                                    ? "sm:text-primary text-white"
+                                    : "text-white"
+                                    }`}
                             />
                         </a>
                     </div>
@@ -109,16 +106,16 @@ export default function Welcome({
                         }}
                     >
                         <SwiperSlide className="h-full">
-                            <img src="/images/hero/1.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl"/>
+                            <img src="/images/hero/1.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
                         </SwiperSlide>
                         <SwiperSlide className="h-full">
-                            <img src="/images/hero/2.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl"/>
+                            <img src="/images/hero/2.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
                         </SwiperSlide>
                         <SwiperSlide className="h-full">
-                            <img src="/images/hero/3.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl"/>
+                            <img src="/images/hero/3.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
                         </SwiperSlide>
                         <SwiperSlide className="h-full">
-                            <img src="/images/hero/4.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl"/>
+                            <img src="/images/hero/4.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
                         </SwiperSlide>
                     </Swiper>
                 </div>

@@ -157,6 +157,7 @@ export default function Products({ listProdukUMKM, queryKategori }) {
             seni: "show",
             arsitektur: "architecture",
             musik: "music",
+            jasa: "briefcase",
         };
         return map[t] || t;
     }

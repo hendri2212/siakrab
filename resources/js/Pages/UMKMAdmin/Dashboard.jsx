@@ -222,7 +222,7 @@ export default function Dashboard({
                     </table>
                     <button
                         onClick={handleEdit}
-                        className="fixed right-4 bottom-[5.5rem] z-[45] flex items-center gap-2 rounded-full px-4 py-3 text-white shadow-lg active:scale-95 transition bg-gradient-to-r from-blue-600 to-indigo-600"
+                        className="fixed right-4 bottom-[7.5rem] z-[45] flex items-center gap-2 rounded-full px-4 py-3 text-white shadow-lg active:scale-95 transition bg-gradient-to-r from-blue-600 to-indigo-600"
                     >
                         <FaPen size={18} />
                         <span className="text-sm font-semibold">Profile</span>

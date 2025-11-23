@@ -24,21 +24,17 @@ import { DataTable } from "./Partial/DataTable";
 
 import { listKategori } from "@/Constants";
 
-export default function ProductsManagement({ auth, listProductsUMKM }) {
+export default function ProductsManagement({ auth, listProductsUMKM, pelakuUMKM }) {
     const [showModal, setShowModal] = useState(false);
-    const { data, setData, post, processing, errors, reset } = useForm({
-        kategori: "",
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
+        kategori: pelakuUMKM.jenis_usaha,
         thumbnail: null,
         images: null,
         nama: "",
         deskripsi: "",
-        harga_start: "",
-        harga_end: "",
         harga_fix: "",
         detail: {},
     });
-    const [selectedKategori, setSelectedKategori] = useState("Pilih Kategori");
-    const [hargaType, setHargaType] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailName, setThumbnailName] = useState("");
     const [images, setImages] = useState([]);
@@ -99,15 +95,18 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
     function handleStore(e) {
         e.preventDefault();
 
+        transform((data) => ({
+            ...data,
+            harga_fix: data.harga_fix.replace(/\./g, ""),
+        }));
+
         post(route("productUMKM.store"), {
             onSuccess: () => {
                 toast.success("Berhasil menyimpan data produk.");
                 setShowModal(false);
                 reset();
-                setSelectedKategori("Pilih Kategori");
                 setThumbnail(null);
                 setThumbnailName("");
-                setHargaType("");
                 setImages("");
             },
             onError: () => {
@@ -231,7 +230,7 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
                 type="button"
                 onClick={() => setShowModal(true)}
                 aria-label="Tambah Produk"
-                className="fixed right-4 bottom-[5.5rem] z-[45] flex items-center gap-2 rounded-full px-4 py-3 text-white shadow-lg active:scale-95 transition bg-gradient-to-r from-blue-600 to-indigo-600"
+                className="fixed right-4 bottom-[7.5rem] z-[45] flex items-center gap-2 rounded-full px-4 py-3 text-white shadow-lg active:scale-95 transition bg-gradient-to-r from-blue-600 to-indigo-600"
             >
                 <BsPlusLg size={18} />
                 <span className="text-sm font-semibold">Produk</span>
@@ -265,44 +264,6 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
 
                     {/* Body scrollable */}
                     <form id="productForm" onSubmit={handleStore} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                        <div>
-                            <SelectInput>
-                                <SelectInput.Trigger
-                                    label={"Kategori Produk"}
-                                    selected={selectedKategori !== "Pilih Kategori"}
-                                >
-                                    <div
-                                        className={
-                                            selectedKategori === "Pilih Kategori"
-                                                ? "text-gray-500"
-                                                : ""
-                                        }
-                                    >
-                                        {selectedKategori}
-                                    </div>
-                                </SelectInput.Trigger>
-                                <SelectInput.Content positionClass={"top-12"}>
-                                    <div className="max-h-[12rem] overflow-auto">
-                                        <ul>
-                                            {listKategori.map((kategori, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="py-2 rounded-md cursor-pointer hover:bg-gray-100 hover:px-4 duration-300"
-                                                    onClick={() => {
-                                                        setSelectedKategori(kategori);
-                                                        setData("kategori", kategori);
-                                                    }}
-                                                >
-                                                    {kategori}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </SelectInput.Content>
-                            </SelectInput>
-                            <InputError message={errors["kategori"]} />
-                        </div>
-
                         <div>
                             <label>
                                 <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
@@ -404,60 +365,18 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
                         </div>
 
                         <div className="space-y-3">
-                            <div className="flex items-center gap-x-5">
-                                <div className="flex items-center gap-x-2">
-                                    <Checkbox
-                                        id="hargaRange"
-                                        checked={hargaType === "range"}
-                                        onChange={() => setHargaType("range")}
-                                    />
-                                    <label htmlFor="hargaRange">Harga Range</label>
-                                </div>
-                                <div className="flex items-center gap-x-2">
-                                    <Checkbox
-                                        id="hargaFix"
-                                        checked={hargaType === "fix"}
-                                        onChange={() => setHargaType("fix")}
-                                    />
-                                    <label htmlFor="hargaFix">Harga Tetap</label>
-                                </div>
-                            </div>
-
-                            {hargaType !== "" && <p>Rp. </p>}
-
-                            {hargaType === "range" && (
-                                <section className="grid grid-cols-2 gap-3">
-                                    <TextInput
-                                        type="number"
-                                        label="Dari Harga"
-                                        placeholder="Dari Harga"
-                                        value={data.harga_start}
-                                        onChange={(e) => setData("harga_start", e.target.value)}
-                                    />
-                                    <InputError message={errors["harga_start"]} />
-                                    <TextInput
-                                        type="number"
-                                        label="Hingga Harga"
-                                        placeholder="Hingga Harga"
-                                        value={data.harga_end}
-                                        onChange={(e) => setData("harga_end", e.target.value)}
-                                    />
-                                    <InputError message={errors["harga_end"]} />
-                                </section>
-                            )}
-
-                            {hargaType === "fix" && (
-                                <>
-                                    <TextInput
-                                        type="number"
-                                        label="Harga Produk"
-                                        placeholder="Harga Produk"
-                                        value={data.harga_fix}
-                                        onChange={(e) => setData("harga_fix", e.target.value)}
-                                    />
-                                    <InputError message={errors["harga_fix"]} />
-                                </>
-                            )}
+                            <TextInput
+                                type="text"
+                                label="Harga Produk"
+                                placeholder="Harga Produk"
+                                value={data.harga_fix}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, "");
+                                    const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                    setData("harga_fix", formatted);
+                                }}
+                            />
+                            <InputError message={errors["harga_fix"]} />
                         </div>
 
                         {/* Spacer to avoid last field hidden by sticky footer */}

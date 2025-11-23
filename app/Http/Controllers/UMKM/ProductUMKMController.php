@@ -22,7 +22,8 @@ class ProductUMKMController extends Controller
         $listProductsUMKM = ProductUMKM::where('pelaku_umkm_id', $pelakuUMKM->id)->latest()->get();
 
         return Inertia::render('UMKMAdmin/ProductsManagement/Index', [
-            'listProductsUMKM' => $listProductsUMKM
+            'listProductsUMKM' => $listProductsUMKM,
+            'pelakuUMKM' => $pelakuUMKM
         ]);
     }
 
@@ -76,9 +77,7 @@ class ProductUMKMController extends Controller
     }
 
 
-    public function update(Request $req, $id)
-    {
-
+    public function update(Request $req, $id) {
         $validatedData = $req->validate([
             'kategori' => 'required',
             'nama' => 'required',
@@ -290,7 +289,7 @@ class ProductUMKMController extends Controller
         $pelakuUMKM = PelakuUMKM::where('user_id', $userId)->firstOrFail();
 
         // hanya ambil produk yang memang punya like
-        $products = ProductUMKM::with(['likes.user'])
+        $products = ProductUMKM::with(['likes.user', 'pelakuUmkm'])
             ->where('pelaku_umkm_id', $pelakuUMKM->id)
             ->whereHas('likes')
             ->latest()
@@ -306,7 +305,7 @@ class ProductUMKMController extends Controller
         $pelakuUMKM = PelakuUMKM::where('user_id', $userId)->firstOrFail();
 
         // hanya ambil produk yang memang disimpan (save)
-        $products = ProductUMKM::with(['saves.user'])
+        $products = ProductUMKM::with(['saves.user', 'pelakuUmkm'])
             ->where('pelaku_umkm_id', $pelakuUMKM->id)
             ->whereHas('saves')
             ->latest()

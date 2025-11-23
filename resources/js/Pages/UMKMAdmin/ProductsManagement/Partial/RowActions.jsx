@@ -26,6 +26,7 @@ import TextArea from "@/Components/TextArea";
 import { BsPlusLg } from "react-icons/bs";
 import { TbArrowsExchange2 } from "react-icons/tb";
 import { FaEdit, FaSave, FaTrash } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
 import { toast } from "react-hot-toast";
 import InputError from "@/Components/InputError";
 import { IoIosWarning } from "react-icons/io";
@@ -299,14 +300,29 @@ export default function RowActions({ row }) {
                 onClose={() => setShowModal(false)}
             >
                 {action === "update" && (
-                    <>
-                        <h1 className="font-semibold text-xl mb-10 flex items-center gap-x-3">
-                            <FaEdit size={25} />
-                            <span>Edit Produk</span>
-                        </h1>
+                    <div className="max-h-[80vh] flex flex-col">
+                        {/* Drag handle + Header sticky */}
+                        <div className="sticky top-0 bg-white z-10">
+                            <div className="mx-auto h-1.5 w-10 rounded-full bg-gray-300 mt-2" />
+                            <div className="flex items-center justify-between px-4 py-3 border-b">
+                                <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                    <FaEdit size={18} />
+                                    <span>Edit Produk</span>
+                                </h1>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Tutup"
+                                    className="p-2 -mr-2"
+                                >
+                                    <MdClose size={20} />
+                                </button>
+                            </div>
+                        </div>
                         <form
                             onSubmit={handleUpdate}
-                            className="flex flex-col gap-y-5"
+                            className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
                         >
                             <div>
                                 <SelectInput>
@@ -320,7 +336,7 @@ export default function RowActions({ row }) {
                                         <div
                                             className={
                                                 selectedKategori ===
-                                                "Pilih Kategori"
+                                                    "Pilih Kategori"
                                                     ? "text-gray-500"
                                                     : ""
                                             }
@@ -396,8 +412,8 @@ export default function RowActions({ row }) {
                                                         setCompletedCrop(c)
                                                     }
                                                     aspect={aspect}
-                                                    // minWidth={400}
-                                                    // minHeight={200}
+                                                // minWidth={400}
+                                                // minHeight={200}
                                                 >
                                                     <img
                                                         ref={imgRef}
@@ -455,18 +471,18 @@ export default function RowActions({ row }) {
                                     <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
                                         <div className="flex items-center gap-x-3 text-gray-500">
                                             {images.length > 0 ||
-                                            (product.images !== null &&
-                                                JSON.parse(product.images)
-                                                    .length > 0) ? (
+                                                (product.images !== null &&
+                                                    JSON.parse(product.images)
+                                                        .length > 0) ? (
                                                 <TbArrowsExchange2 />
                                             ) : (
                                                 <BsPlusLg />
                                             )}
                                             <span>
                                                 {images.length > 0 ||
-                                                (product.images !== null &&
-                                                    JSON.parse(product.images)
-                                                        .length > 0)
+                                                    (product.images !== null &&
+                                                        JSON.parse(product.images)
+                                                            .length > 0)
                                                     ? "Ganti"
                                                     : "Upload"}{" "}
                                                 Gambar Lainnya (Multiple)
@@ -484,46 +500,46 @@ export default function RowActions({ row }) {
 
                                 {images.length > 0
                                     ? images.map((image, i) => (
-                                          <div
-                                              key={i}
-                                              className="p-3 border rounded-md mt-3"
-                                          >
-                                              <div className="h-[5rem] flex gap-x-5">
-                                                  <div>
-                                                      <img
-                                                          src={image}
-                                                          alt="Preview"
-                                                          className="h-full"
-                                                      />
-                                                  </div>
-                                                  <p className="text-gray-500">
-                                                      {imagesName[i]}
-                                                  </p>
-                                              </div>
-                                          </div>
-                                      ))
+                                        <div
+                                            key={i}
+                                            className="p-3 border rounded-md mt-3"
+                                        >
+                                            <div className="h-[5rem] flex gap-x-5">
+                                                <div>
+                                                    <img
+                                                        src={image}
+                                                        alt="Preview"
+                                                        className="h-full"
+                                                    />
+                                                </div>
+                                                <p className="text-gray-500">
+                                                    {imagesName[i]}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))
                                     : product.images !== null &&
-                                      JSON.parse(product.images).map(
-                                          (image, i) => (
-                                              <div
-                                                  key={i}
-                                                  className="p-3 border rounded-md mt-3"
-                                              >
-                                                  <div className="h-[5rem] flex gap-x-5">
-                                                      <div>
-                                                          <img
-                                                              src={`/images/uploads/products/${image}`}
-                                                              alt="Preview"
-                                                              className="h-full"
-                                                          />
-                                                      </div>
-                                                      <p className="text-gray-500">
-                                                          {image}
-                                                      </p>
-                                                  </div>
-                                              </div>
-                                          )
-                                      )}
+                                    JSON.parse(product.images).map(
+                                        (image, i) => (
+                                            <div
+                                                key={i}
+                                                className="p-3 border rounded-md mt-3"
+                                            >
+                                                <div className="h-[5rem] flex gap-x-5">
+                                                    <div>
+                                                        <img
+                                                            src={`/images/uploads/products/${image}`}
+                                                            alt="Preview"
+                                                            className="h-full"
+                                                        />
+                                                    </div>
+                                                    <p className="text-gray-500">
+                                                        {image}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    )}
                             </div>
                             <div>
                                 <TextInput
@@ -636,7 +652,7 @@ export default function RowActions({ row }) {
                                 />
                             )}
                         </form>
-                    </>
+                    </div>
                 )}
 
                 {action === "delete" && (

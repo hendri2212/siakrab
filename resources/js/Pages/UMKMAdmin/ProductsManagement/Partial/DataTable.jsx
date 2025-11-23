@@ -37,29 +37,29 @@ const levenshtein = (a, b) => {
 const fuzzyGlobalFilter = (row, columnId, filterValue) => {
     const query = normalize(filterValue);
     if (!query) return true;
-    
+
     // Get all column values from the row
     const searchableValues = Object.keys(row.original || {}).map(key => {
         const val = row.original[key];
         return normalize(val);
     }).filter(Boolean);
-    
+
     // Search through all values
     for (const text of searchableValues) {
         if (!text) continue;
-        
+
         // 1) Normal contains
         if (text.includes(query)) return true;
-        
+
         // 2) Fuzzy match per-word
         const words = text.split(/\s+/);
         for (const word of words) {
             if (!word) continue;
             if (word.includes(query)) return true;
-            
+
             const wordDist = levenshtein(word, query);
             const lenDiff = Math.abs(word.length - query.length);
-            
+
             let maxDistance;
             if (query.length <= 3) {
                 maxDistance = 1;
@@ -68,17 +68,17 @@ const fuzzyGlobalFilter = (row, columnId, filterValue) => {
             } else {
                 maxDistance = 3;
             }
-            
+
             if (wordDist <= maxDistance && lenDiff <= maxDistance) {
                 return true;
             }
         }
-        
+
         // 3) Fuzzy match entire text
         const textDist = levenshtein(text, query);
         const textLenDiff = Math.abs(text.length - query.length);
         const maxDistForText = query.length <= 3 ? 1 : (query.length <= 5 ? 2 : 3);
-        
+
         if (textDist <= maxDistForText && textLenDiff <= maxDistForText) {
             return true;
         }
@@ -233,20 +233,6 @@ export function DataTable({ data }) {
                             "nama_kategori",
                         ];
                         const descriptionKeys = ["description", "deskripsi", "desc"];
-                        const priceStartKeys = [
-                            "price_start",
-                            "harga_start",
-                            "harga_mulai",
-                            "min_price",
-                            "harga_min",
-                        ];
-                        const priceEndKeys = [
-                            "price_end",
-                            "harga_end",
-                            "harga_akhir",
-                            "max_price",
-                            "harga_max",
-                        ];
                         const priceFixKeys = [
                             "price_fix",
                             "harga_fix",
@@ -258,8 +244,6 @@ export function DataTable({ data }) {
                         const name = resolve(row, nameKeys, "");
                         const category = resolve(row, categoryKeys, "");
                         const description = resolve(row, descriptionKeys, "");
-                        const priceStart = resolve(row, priceStartKeys, "");
-                        const priceEnd = resolve(row, priceEndKeys, "");
                         const priceFix = resolve(row, priceFixKeys, "");
 
                         const thumbCell = findCellByIds(row, thumbKeys);
@@ -293,10 +277,9 @@ export function DataTable({ data }) {
                                         <div className="text-xs mb-2 break-words">{description || "-"}</div>
 
                                         <div className="mt-1 flex flex-wrap gap-1 text-xs">
-                                            {priceStart && <Pill label="Start">{toIDR(priceStart)}</Pill>}
-                                            {priceEnd && <Pill label="End">{toIDR(priceEnd)}</Pill>}
-                                            {priceFix && <Pill label="Fix">{toIDR(priceFix)}</Pill>}
-                                            {!priceStart && !priceEnd && !priceFix && <span>-</span>}
+                                            {/* {priceFix && <Pill label="Fix">{toIDR(priceFix)}</Pill>} */}
+                                            {priceFix && <Pill>{toIDR(priceFix)}</Pill>}
+                                            {!priceFix && <span>-</span>}
                                         </div>
                                         {/* END Product Info */}
                                         {/* Action Area */}

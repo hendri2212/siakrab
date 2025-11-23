@@ -19,6 +19,7 @@ export const listKategori = [
     "Televisi dan Radio",
     "Seni Pertunjukan",
     "Seni Rupa",
+    "Jasa Lainnya"
 ];
 
 export const services = [

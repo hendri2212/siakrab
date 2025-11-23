@@ -25,7 +25,7 @@
             max-width: 420px; /* lock to mobile width even on desktop */
             width: 100%;
             margin: 0 auto;    /* center on wider screens */
-            padding: 0;        /* horizontal breathing room */
+            /* padding: 0;        horizontal breathing room */
             background: #f5f5f5;
         }
 
@@ -48,8 +48,10 @@
 </head>
 
 <body class="antialiased">
-    <div class="app-container pt-6 sm:pt-8">
-        @inertia
+    <div class="app-container">
+        <div class="pt-6 sm:pt-8">
+            @inertia
+        </div>
     </div>
 
     <script>
