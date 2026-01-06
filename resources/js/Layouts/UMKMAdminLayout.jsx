@@ -84,11 +84,11 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
                     </div>
                     <div>{cta}</div>
                 </header>
-                <main>{children}</main>
+                <main className="w-full">{children}</main>
             </section>
 
             {/* Fixed Bottom Navigation */}
-            <nav aria-label="Navigasi UMKM Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)] rounded-t-lg">
+            <nav aria-label="Navigasi UMKM Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[max(env(safe-area-inset-bottom),16px)] rounded-t-lg">
                 <div className={`grid ${colsClass}`}>
                     {items.map((item) => {
                         const active = isActive(url, item.path);
@@ -99,9 +99,8 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
                                 method={item.method || undefined}
                                 as={item.method ? "button" : undefined}
                                 aria-current={active ? "page" : undefined}
-                                className={`flex flex-col items-center justify-center py-3 text-xs ${
-                                    active ? "text-blue-600 font-semibold" : "text-gray-600"
-                                }`}
+                                className={`flex flex-col items-center justify-center py-3 text-xs ${active ? "text-blue-600 font-semibold" : "text-gray-600"
+                                    }`}
                             >
                                 <div className={`mb-1 ${active ? "scale-110" : ""}`}>{item.icon}</div>
                                 <span className="leading-none">{item.name}</span>

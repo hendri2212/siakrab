@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#00EAFF" />
     <link rel="apple-touch-icon" href="{{ asset('/icon.png') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
@@ -24,6 +24,7 @@
         .app-container {
             max-width: 420px; /* lock to mobile width even on desktop */
             width: 100%;
+            min-width: 420px; /* ensure consistent width across pages */
             margin: 0 auto;    /* center on wider screens */
             /* padding: 0;        horizontal breathing room */
             background: #f5f5f5;

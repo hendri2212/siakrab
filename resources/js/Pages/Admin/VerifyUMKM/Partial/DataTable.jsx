@@ -8,6 +8,10 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+import { router } from "@inertiajs/react";
+import { toast } from "react-hot-toast";
+import { FaCheck } from "react-icons/fa6";
+import { BiBlock } from "react-icons/bi";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,6 +60,28 @@ export function DataTable({ data }) {
             globalFilter,
         },
     });
+
+    const handleVerify = (status) => {
+        const role = status === "Terima" ? "umkmAdmin" : "rejected";
+        const message =
+            status === "Terima"
+                ? "Berhasil memverifikasi pendaftaran UMKM dengan status diterima."
+                : "Berhasil memverifikasi pendaftaran UMKM dengan status ditolak.";
+
+        router.post(
+            route("verifyUMKM.update", selectedRow.user_id),
+            { role },
+            {
+                onSuccess: () => {
+                    toast.success(message);
+                    setSelectedRow(null); // Close detail view on success maybe? Or keep it open.
+                },
+                onError: () => {
+                    toast.error("Gagal memverifikasi pendaftaran UMKM.");
+                },
+            }
+        );
+    };
 
     return (
         <div className="w-full">
@@ -142,6 +168,23 @@ export function DataTable({ data }) {
                             />
                         </div>
                     )}
+                    <div className="mt-5 flex gap-x-3">
+                        <Button
+                            variant="destructive"
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                            onClick={() => handleVerify("Tolak")}
+                        >
+                            <BiBlock className="mr-2 h-4 w-4" />
+                            Di Tolak
+                        </Button>
+                        <Button
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => handleVerify("Terima")}
+                        >
+                            <FaCheck className="mr-2 h-4 w-4" />
+                            Di Terima
+                        </Button>
+                    </div>
                 </div>
             )}
             <div className="rounded-md border">
@@ -155,10 +198,10 @@ export function DataTable({ data }) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     );
                                 })}

@@ -69,7 +69,7 @@ export default function AdminLayout({ children, cta }) {
             </section>
 
             {/* Fixed Bottom Navigation */}
-            <nav aria-label="Navigasi Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[env(safe-area-inset-bottom)] rounded-t-lg">
+            <nav aria-label="Navigasi Admin" className="fixed bottom-0 inset-x-0 z-50 bg-white border-t shadow-md pb-[max(env(safe-area-inset-bottom),16px)] rounded-t-lg">
                 <div className={`grid ${colsClass}`}>
                     {primaryItems.map((item) => {
                         const active = isActive(url, item.path);

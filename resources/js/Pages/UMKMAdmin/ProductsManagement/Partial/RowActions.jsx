@@ -49,7 +49,6 @@ export default function RowActions({ row }) {
         detail: {},
     });
     const [selectedKategori, setSelectedKategori] = useState("Pilih Kategori");
-    const [hargaType, setHargaType] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailName, setThumbnailName] = useState("");
     const [action, setAction] = useState("");
@@ -74,18 +73,8 @@ export default function RowActions({ row }) {
             kategori: product.kategori,
             nama: product.nama,
             deskripsi: product.deskripsi,
-            harga_start: product.harga_start,
-            harga_end: product.harga_end,
             harga_fix: product.harga_fix,
         });
-
-        if (product.harga_fix !== null) {
-            setHargaType("fix");
-        }
-
-        if (product.harga_start !== null || product.harga_end !== null) {
-            setHargaType("range");
-        }
     }
 
     function handleImageUpload(e) {
@@ -140,7 +129,6 @@ export default function RowActions({ row }) {
                 setSelectedKategori("Pilih Kategori");
                 setThumbnail(null);
                 setImageName("");
-                setHargaType("");
             },
             onError: (error) => {
                 toast.error("Gagal memperbarui data produk.");
@@ -324,7 +312,7 @@ export default function RowActions({ row }) {
                             onSubmit={handleUpdate}
                             className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
                         >
-                            <div>
+                            {/* <div>
                                 <SelectInput>
                                     <SelectInput.Trigger
                                         label={"Kategori Produk"}
@@ -373,7 +361,7 @@ export default function RowActions({ row }) {
                                     </SelectInput.Content>
                                 </SelectInput>
                                 <InputError message={errors["kategori"]} />
-                            </div>
+                            </div> */}
                             <div>
                                 <label>
                                     <div className="rounded-md border border-dashed h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
@@ -563,84 +551,22 @@ export default function RowActions({ row }) {
                                 />
                                 <InputError message={errors["deskripsi"]} />
                             </div>
-                            <div className="flex gap-x-5">
-                                <div className="flex items-center gap-x-3">
-                                    <Checkbox
-                                        id="hargaRange"
-                                        checked={hargaType === "range"}
-                                        onChange={() => setHargaType("range")}
-                                    />
-                                    <label htmlFor="hargaRange">
-                                        Harga Range
-                                    </label>
-                                </div>
-                                <div className="flex items-center gap-x-3">
-                                    <Checkbox
-                                        id="hargaFix"
-                                        checked={hargaType === "fix"}
-                                        onChange={() => setHargaType("fix")}
-                                    />
-                                    <label htmlFor="hargaFix">
-                                        Harga Tetap
-                                    </label>
-                                </div>
-                            </div>
                             <div>
-                                {hargaType !== "" && <p>Rp. </p>}
-                                {hargaType === "range" && (
-                                    <section className="grid grid-cols-2 gap-5">
-                                        <TextInput
-                                            type="number"
-                                            label="Dari Harga"
-                                            placeholder="Dari Harga"
-                                            value={data.harga_start}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_start",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_start"]}
-                                        />
-
-                                        <TextInput
-                                            type="number"
-                                            label="Hingga Harga"
-                                            placeholder="Hingga Harga"
-                                            value={data.harga_end}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_end",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_end"]}
-                                        />
-                                    </section>
-                                )}
-                                {hargaType === "fix" && (
-                                    <>
-                                        <TextInput
-                                            type="number"
-                                            label="Harga Produk"
-                                            placeholder="Harga Produk"
-                                            value={data.harga_fix}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_fix",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_fix"]}
-                                        />
-                                    </>
-                                )}
+                                <TextInput
+                                    type="number"
+                                    label="Harga Produk"
+                                    placeholder="Harga Produk"
+                                    value={data.harga_fix}
+                                    onChange={(e) =>
+                                        setData(
+                                            "harga_fix",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                                <InputError
+                                    message={errors["harga_fix"]}
+                                />
                             </div>
                             {processing ? (
                                 <Loading />
