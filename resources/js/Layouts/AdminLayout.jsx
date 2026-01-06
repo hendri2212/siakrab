@@ -1,5 +1,5 @@
 import { Head, usePage, Link } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import {
     MdAnnouncement,
@@ -32,14 +32,28 @@ export default function AdminLayout({ children, cta }) {
     const { url } = usePage();
 
     const [showMore, setShowMore] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    // Handle scroll event with useCallback for better performance
+    const handleScroll = useCallback(() => {
+        setIsScrolled(window.scrollY > 10);
+    }, []);
 
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "Escape") setShowMore(false);
         };
         window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, []);
+        window.addEventListener("scroll", handleScroll, { passive: true });
+
+        // Check initial scroll position
+        handleScroll();
+
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [handleScroll]);
 
     const rawPath = url.includes("/admin/")
         ? url.split("/admin/")[1]
@@ -56,15 +70,27 @@ export default function AdminLayout({ children, cta }) {
     return (
         <>
             <Head title="Admin" />
-            {/* page container with bottom padding to avoid being overlapped by the fixed bottom nav */}
-            <section className="min-h-screen w-full px-3 pb-24">
-                <header className="py-3 mb-3 flex justify-between">
+
+            {/* Sticky Header with scroll-aware background */}
+            <header
+                className={`sticky top-0 z-40 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 transition-all duration-300 ${isScrolled
+                        ? "bg-white/95 backdrop-blur-md shadow-md"
+                        : "bg-transparent"
+                    }`}
+            >
+                <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="font-bold text-xl">{headerTitle}</h1>
-                        {/* <p>{url}</p> */}
+                        <h1 className={`font-bold text-xl transition-all duration-300 ${isScrolled ? "text-gray-800" : "text-gray-900"
+                            }`}>
+                            {headerTitle}
+                        </h1>
                     </div>
                     <div>{cta}</div>
-                </header>
+                </div>
+            </header>
+
+            {/* page container with bottom padding to avoid being overlapped by the fixed bottom nav */}
+            <section className="min-h-screen w-full px-3 pb-24">
                 <main>{children}</main>
             </section>
 
