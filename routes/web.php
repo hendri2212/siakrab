@@ -61,6 +61,7 @@ Route::get('/', function () {
 
 // DETAIL
 Route::get("/product/{slug}", [ProductUMKMController::class, 'detail'])->name('productUMKM.detail');
+Route::get("/store/{id}", [ProductUMKMController::class, 'storeProfile'])->name('store.profile');
 Route::get("/news/{slug}", [NewsController::class, 'detail'])->name('news.detail');
 Route::get("/announcement/{id}", [AnnouncementController::class, 'detail'])->name('announcement.detail');
 

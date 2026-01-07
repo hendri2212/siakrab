@@ -399,4 +399,18 @@ class ProductUMKMController extends Controller
             'queryKategori' => $kategoris,
         ]);
     }
+
+    public function storeProfile($id)
+    {
+        $pelakuUMKM = PelakuUMKM::with('user')->findOrFail($id);
+        $products = ProductUMKM::where('pelaku_umkm_id', $id)
+            ->withCount(['likes', 'saves'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Store/Index', [
+            'pelakuUMKM' => $pelakuUMKM,
+            'products' => $products,
+        ]);
+    }
 }

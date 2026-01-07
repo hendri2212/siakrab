@@ -302,7 +302,12 @@ Hubungi penjual: https://wa.me/${formatPhone(productDetail?.pelaku_umkm.telepon)
 
                         <div className="mt-6 flex items-center gap-2 text-base">
                             <MdVerified className="text-primary" />
-                            {productDetail?.pelaku_umkm.nama_usaha}
+                            <Link
+                                href={`/store/${productDetail?.pelaku_umkm.id}`}
+                                className="hover:underline hover:text-primary"
+                            >
+                                {productDetail?.pelaku_umkm.nama_usaha}
+                            </Link>
                         </div>
                         <div className="text-sm text-label">
                             <div className="flex items-center gap-2 mb-2">
