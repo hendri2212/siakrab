@@ -12,6 +12,7 @@ import {
 } from "react-icons/md";
 import { IoNewspaper } from "react-icons/io5";
 import { FaStore, FaUser } from "react-icons/fa";
+import { MdViewCarousel } from "react-icons/md";
 
 const navItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <MdDashboard size={22} /> },
@@ -20,6 +21,7 @@ const navItems = [
     { name: "Berita", path: "/admin/news-management", icon: <IoNewspaper size={22} /> },
     { name: "Pengumuman", path: "/admin/announcements-management", icon: <MdAnnouncement size={22} /> },
     { name: "Galeri", path: "/admin/gallery-management", icon: <MdCameraAlt size={22} /> },
+    { name: "Carousel", path: "/admin/carousel-management", icon: <MdViewCarousel size={22} /> },
     { name: "Profil", path: "/profile", icon: <FaUser size={22} /> },
     { name: "Logout", path: "/logout", icon: <MdLogout size={22} />, method: "post" },
 ];
@@ -74,8 +76,8 @@ export default function AdminLayout({ children, cta }) {
             {/* Sticky Header with scroll-aware background */}
             <header
                 className={`sticky top-0 z-40 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 transition-all duration-300 ${isScrolled
-                        ? "bg-white/95 backdrop-blur-md shadow-md"
-                        : "bg-transparent"
+                    ? "bg-white/95 backdrop-blur-md shadow-md"
+                    : "bg-transparent"
                     }`}
             >
                 <div className="flex items-center justify-between">

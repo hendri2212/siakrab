@@ -12,6 +12,11 @@ export default function FormDataDiri({
     errorMessage,
     errors,
 }) {
+    const handleFileChange = (e) => {
+        const file = e.target.files[0] || null;
+        setData("foto_ktp", file);
+    };
+
     return (
         <div className="flex flex-col gap-y-5">
             <div>
@@ -51,30 +56,44 @@ export default function FormDataDiri({
                 <InputError message={errors["nik"]} />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                     Foto KTP <span className="text-red-500">*</span>
                 </label>
-                <label className="block w-full cursor-pointer">
+
+                {/* Label-wrapped input - most reliable for Android WebView */}
+                <label className="relative block w-full min-h-[56px] cursor-pointer">
+                    {/* Actual file input - visible but styled to be invisible, positioned over the button */}
                     <input
                         type="file"
                         name="foto_ktp"
-                        accept="image/jpeg,image/jpg,image/png"
-                        capture="environment"
-                        className="block w-full text-sm text-gray-900 dark:text-gray-100
-                                   cursor-pointer min-h-[48px] py-3
-                                   file:mr-4 file:py-3 file:px-4 file:rounded-md
-                                   file:border-0 file:text-sm file:font-semibold
-                                   file:bg-indigo-50 file:text-indigo-700 file:cursor-pointer
-                                   hover:file:bg-indigo-100 active:file:bg-indigo-200"
-                        onChange={(e) =>
-                            setData("foto_ktp", e.target.files[0] || null)
-                        }
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        style={{ fontSize: '16px' }} // Prevents iOS zoom
+                        onChange={handleFileChange}
                     />
+
+                    {/* Visual button layer */}
+                    <div className="w-full min-h-[56px] px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg
+                                   bg-gray-50 hover:bg-gray-100 active:bg-gray-200
+                                   flex items-center justify-center gap-2
+                                   text-gray-600 font-medium text-sm
+                                   transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {foto_ktp ? "Ganti Foto KTP" : "Pilih Foto KTP"}
+                    </div>
                 </label>
+
                 {foto_ktp && (
-                    <p className="text-xs text-green-600 mt-1">
-                        File terpilih: {foto_ktp.name}
-                    </p>
+                    <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                        <p className="text-sm text-green-700 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            {foto_ktp.name}
+                        </p>
+                    </div>
                 )}
                 <InputError message={errors["foto_ktp"]} />
             </div>

@@ -26,6 +26,7 @@ export default function Welcome({
     listAllProdukUMKM,
     listBerita,
     listPengumuman,
+    listCarousel,
     queryKategori,
 }) {
     // const swiper = useSwiper();
@@ -105,18 +106,42 @@ export default function Welcome({
                             }
                         }}
                     >
-                        <SwiperSlide className="h-full">
-                            <img src="/images/hero/1.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
-                        </SwiperSlide>
-                        <SwiperSlide className="h-full">
-                            <img src="/images/hero/2.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
-                        </SwiperSlide>
-                        <SwiperSlide className="h-full">
-                            <img src="/images/hero/3.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
-                        </SwiperSlide>
-                        <SwiperSlide className="h-full">
-                            <img src="/images/hero/4.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
-                        </SwiperSlide>
+                        {listCarousel && listCarousel.length > 0 ? (
+                            listCarousel.map((carousel) => (
+                                <SwiperSlide key={carousel.id} className="h-full">
+                                    {carousel.link ? (
+                                        <a href={carousel.link} target="_blank" rel="noopener noreferrer">
+                                            <img
+                                                src={"/images/carousel/" + carousel.image}
+                                                alt={carousel.title || "carousel"}
+                                                className="h-full w-full object-cover block rounded-xl"
+                                            />
+                                        </a>
+                                    ) : (
+                                        <img
+                                            src={"/images/carousel/" + carousel.image}
+                                            alt={carousel.title || "carousel"}
+                                            className="h-full w-full object-cover block rounded-xl"
+                                        />
+                                    )}
+                                </SwiperSlide>
+                            ))
+                        ) : (
+                            <>
+                                <SwiperSlide className="h-full">
+                                    <img src="/images/hero/1.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
+                                </SwiperSlide>
+                                <SwiperSlide className="h-full">
+                                    <img src="/images/hero/2.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
+                                </SwiperSlide>
+                                <SwiperSlide className="h-full">
+                                    <img src="/images/hero/3.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
+                                </SwiperSlide>
+                                <SwiperSlide className="h-full">
+                                    <img src="/images/hero/4.jpg" alt="kotabaru" className="h-full w-full object-cover block rounded-xl" />
+                                </SwiperSlide>
+                            </>
+                        )}
                     </Swiper>
                 </div>
             </section>
