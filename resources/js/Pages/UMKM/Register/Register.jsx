@@ -93,15 +93,14 @@ export default function RegisterUMKM() {
                 toast.success("Pendaftaran UMKM Sukses.");
                 router.get("/register/umkm/waiting");
             },
-            onError: () => {
-                if (typeof errors === "object") {
-                    Object.values(errors).forEach((error, index) => {
+            onError: (responseErrors) => {
+                if (responseErrors && typeof responseErrors === "object") {
+                    Object.values(responseErrors).forEach((error, index) => {
                         toast.error(
                             `Pendaftaran Gagal \n ${index + 1}. ${error}`
                         );
                     });
                 } else {
-                    // Jika errors bukan objek
                     toast.error("Pendaftaran UMKM Gagal.");
                 }
             },
@@ -190,11 +189,11 @@ export default function RegisterUMKM() {
                                 >
                                     <div
                                         className={`mx-auto rounded-full w-10 h-10 flex justify-center items-center font-semibold ${currentStepIndex === i &&
-                                                !fulfilledFormIndex.includes(i)
-                                                ? "bg-black text-white"
-                                                : fulfilledFormIndex.includes(i)
-                                                    ? "bg-primary text-white"
-                                                    : "bg-gray-200 text-black"
+                                            !fulfilledFormIndex.includes(i)
+                                            ? "bg-black text-white"
+                                            : fulfilledFormIndex.includes(i)
+                                                ? "bg-primary text-white"
+                                                : "bg-gray-200 text-black"
                                             }`}
                                     >
                                         {i + 1}

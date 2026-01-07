@@ -7,7 +7,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/table";
 
 import TextInput from "@/Components/TextInput";
-import { columns } from "./Columns";
+import { getColumns } from "./Columns";
 
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
@@ -34,6 +34,25 @@ export function DataTable({ data }) {
     const [columnVisibility, setColumnVisibility] = React.useState();
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
+
+    // State untuk image modal
+    const [selectedImage, setSelectedImage] = React.useState(null);
+    const [showImageModal, setShowImageModal] = React.useState(false);
+
+    const handleImageClick = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setShowImageModal(true);
+    };
+
+    const closeImageModal = () => {
+        setShowImageModal(false);
+        setSelectedImage(null);
+    };
+
+    const columns = React.useMemo(
+        () => getColumns({ onImageClick: handleImageClick }),
+        []
+    );
 
     const table = useReactTable({
         data,
@@ -106,10 +125,10 @@ export function DataTable({ data }) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     );
                                 })}
@@ -172,6 +191,29 @@ export function DataTable({ data }) {
                     </Button>
                 </div>
             </div>
+
+            {/* Image Preview Modal */}
+            {showImageModal && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+                    onClick={closeImageModal}
+                >
+                    <div className="relative max-w-[90vw] max-h-[90vh]">
+                        <button
+                            onClick={closeImageModal}
+                            className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
+                        >
+                            <X size={32} />
+                        </button>
+                        <img
+                            src={selectedImage}
+                            alt="Preview"
+                            className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -83,7 +83,37 @@ Hubungi penjual: https://wa.me/${formatPhone(productDetail?.pelaku_umkm.telepon)
         }
     }
 
+    // Detect if running inside Android WebView
+    function isAndroidWebView() {
+        const ua = navigator.userAgent || "";
+        // Common WebView signatures: "wv" in Android, specific app user agents
+        return /Android/.test(ua) && (/wv/.test(ua) || /Version\/[\d.]+.*Chrome\/[\d.]+ Mobile/.test(ua) && !/Chrome\/[\d.]+ Mobile Safari/.test(ua));
+    }
+
+    // Fallback share using whatsapp:// intent (better for WebView)
+    function shareViaWhatsAppIntent() {
+        const intentUrl = `whatsapp://send?text=${encodeURIComponent(shareMessage)}`;
+        const waLink = document.createElement("a");
+        waLink.href = intentUrl;
+        waLink.click();
+    }
+
+    // Fallback using wa.me (works in most browsers)
+    function shareViaWaMe() {
+        window.location.href = shareTextOnlyUrl;
+    }
+
     async function shareToWhatsAppWithImage() {
+        // If in WebView, use intent directly for best compatibility
+        if (isAndroidWebView()) {
+            try {
+                shareViaWhatsAppIntent();
+            } catch (e) {
+                shareViaWaMe();
+            }
+            return;
+        }
+
         try {
             // Prefer the Web Share API (Level 2 with file support) when available (mostly Android/iOS)
             const res = await fetch(shareImageUrl, { mode: "cors" });
@@ -109,12 +139,20 @@ Hubungi penjual: https://wa.me/${formatPhone(productDetail?.pelaku_umkm.telepon)
                     url: shareData.url
                 });
             } else {
-                // Fallback to WhatsApp text share URL
-                window.open(shareTextOnlyUrl, "_blank", "noopener,noreferrer");
+                // Fallback to WhatsApp intent first, then wa.me
+                try {
+                    shareViaWhatsAppIntent();
+                } catch (intentError) {
+                    shareViaWaMe();
+                }
             }
         } catch (e) {
-            // Last-resort fallback to text-only share via WhatsApp
-            window.open(shareTextOnlyUrl, "_blank", "noopener,noreferrer");
+            // Last-resort fallback chain
+            try {
+                shareViaWhatsAppIntent();
+            } catch (intentError) {
+                shareViaWaMe();
+            }
         }
     }
 

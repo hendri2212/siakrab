@@ -7,7 +7,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const columns = [
+export const getColumns = ({ onImageClick }) => [
     {
         id: "select",
         header: ({ table }) => (
@@ -53,17 +53,22 @@ export const columns = [
     {
         accessorKey: "thumbnail",
         header: "Gambar Thumbnail",
-        cell: ({ row }) => (
-            <div>
-                <img
-                    src={
-                        "/images/uploads/products/" + row.getValue("thumbnail")
-                    }
-                    alt="produk umkm"
-                    width="80"
-                />
-            </div>
-        ),
+        cell: ({ row }) => {
+            const imageUrl = "/images/uploads/products/" + row.getValue("thumbnail");
+            return (
+                <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => onImageClick(imageUrl)}
+                >
+                    <img
+                        src={imageUrl}
+                        alt="produk umkm"
+                        width="80"
+                        className="rounded"
+                    />
+                </div>
+            );
+        },
     },
     {
         accessorKey: "nama",

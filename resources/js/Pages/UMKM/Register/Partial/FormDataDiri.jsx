@@ -52,21 +52,30 @@ export default function FormDataDiri({
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Foto KTP
+                    Foto KTP <span className="text-red-500">*</span>
                 </label>
-                <input
-                    type="file"
-                    name="foto_ktp"
-                    accept="image/*"
-                    className="block w-full text-sm text-gray-900 dark:text-gray-100
-                               file:mr-4 file:py-2 file:px-4 file:rounded-md
-                               file:border-0 file:text-sm file:font-semibold
-                               file:bg-indigo-50 file:text-indigo-700
-                               hover:file:bg-indigo-100"
-                    onChange={(e) =>
-                        setData("foto_ktp", e.target.files[0] || null)
-                    }
-                />
+                <label className="block w-full cursor-pointer">
+                    <input
+                        type="file"
+                        name="foto_ktp"
+                        accept="image/jpeg,image/jpg,image/png"
+                        capture="environment"
+                        className="block w-full text-sm text-gray-900 dark:text-gray-100
+                                   cursor-pointer min-h-[48px] py-3
+                                   file:mr-4 file:py-3 file:px-4 file:rounded-md
+                                   file:border-0 file:text-sm file:font-semibold
+                                   file:bg-indigo-50 file:text-indigo-700 file:cursor-pointer
+                                   hover:file:bg-indigo-100 active:file:bg-indigo-200"
+                        onChange={(e) =>
+                            setData("foto_ktp", e.target.files[0] || null)
+                        }
+                    />
+                </label>
+                {foto_ktp && (
+                    <p className="text-xs text-green-600 mt-1">
+                        File terpilih: {foto_ktp.name}
+                    </p>
+                )}
                 <InputError message={errors["foto_ktp"]} />
             </div>
             <div>
