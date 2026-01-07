@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\CarouselController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProductController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\UMKM\ProductUMKMController;
 use App\Http\Controllers\UMKM\ProfileUMKMController;
 use App\Http\Controllers\UMKM\RegisterUMKMController;
 use App\Models\Announcement;
+use App\Models\Carousel;
 use App\Models\News;
 use App\Models\PelakuUMKM;
 use App\Models\ProductUMKM;
@@ -34,6 +36,7 @@ Route::get('/', function () {
     $listAllProdukUMKM = ProductUMKM::with('pelakuUmkm')->latest()->get();
     $listBerita = News::with('author')->latest()->get();
     $listPengumuman = Announcement::with('author')->latest()->get();
+    $listCarousel = Carousel::active()->ordered()->get();
 
     // PRODUK UMKM
     $kategori = $_GET['kategori'] ?? '';
@@ -51,6 +54,7 @@ Route::get('/', function () {
         'listAllProdukUMKM' => $listAllProdukUMKM,
         'listBerita' => $listBerita,
         'listPengumuman' => $listPengumuman,
+        'listCarousel' => $listCarousel,
         'queryKategori' => $kategori,
     ]);
 })->name('home');
@@ -131,6 +135,13 @@ Route::middleware(['user.role:admin'])->group(function () {
     Route::post('/admin/gallery-management/store', [GalleryController::class, 'store'])->name('gallery.store');
     Route::post('/admin/gallery-management/update/{id}', [GalleryController::class, 'update'])->name('gallery.update');
     Route::post('/admin/gallery-management/delete/{id}', [GalleryController::class, 'delete'])->name('gallery.delete');
+
+    // Carousel Management
+    Route::get('/admin/carousel-management', [CarouselController::class, 'index'])->name('carousel.index');
+    Route::post('/admin/carousel-management/store', [CarouselController::class, 'store'])->name('carousel.store');
+    Route::post('/admin/carousel-management/update/{id}', [CarouselController::class, 'update'])->name('carousel.update');
+    Route::post('/admin/carousel-management/delete/{id}', [CarouselController::class, 'delete'])->name('carousel.delete');
+    Route::post('/admin/carousel-management/toggle/{id}', [CarouselController::class, 'toggleActive'])->name('carousel.toggle');
 
     Route::post('/admin/pelaku-umkm/update', [ProfileUMKMController::class, 'update'])->name('pelakuUMKM.update');
     Route::get('/admin/pelaku-umkm/export', [AccountController::class, 'export'])->name('pelakuUMKM.export');
