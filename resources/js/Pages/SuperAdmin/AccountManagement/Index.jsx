@@ -40,7 +40,7 @@ export default function AccountManagement({ listUser }) {
             cta={
                 <Button
                     variant={"primary"}
-                    text={"Buat Akun Baru"}
+                    text={"Akun"}
                     icon={<BsPlusLg />}
                     onClick={() => {
                         setShowModal((show) => !show);
