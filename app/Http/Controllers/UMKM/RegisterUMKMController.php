@@ -37,12 +37,34 @@ class RegisterUMKMController extends Controller
                 'noIjinUsaha' => 'required',
                 'noNPWP' => 'required',
                 'nik' => 'required|digits:16|unique:pelaku_umkms,nik',
-                'foto_ktp' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+                'foto_ktp' => 'required',
+            ], [
+                'nama.required' => 'Nama wajib diisi',
+                'email.required' => 'Email wajib diisi',
+                'email.email' => 'Format email tidak valid',
+                'email.unique' => 'Email sudah terdaftar',
+                'password.required' => 'Password wajib diisi',
+                'namaUsaha.required' => 'Nama Usaha wajib diisi',
+                'alamatUsaha.required' => 'Alamat Usaha wajib diisi',
+                'kecamatan.required' => 'Kecamatan wajib diisi',
+                'telepon.required' => 'Nomor Telepon wajib diisi',
+                'jenisUsaha.required' => 'Jenis Usaha wajib diisi',
+                'bidangUsaha.required' => 'Bidang Usaha wajib diisi',
+                'jumlahTenagaKerja.required' => 'Jumlah Tenaga Kerja wajib diisi',
+                'noIjinUsaha.required' => 'Nomor Ijin Usaha wajib diisi',
+                'noNPWP.required' => 'Nomor NPWP wajib diisi',
+                'nik.required' => 'NIK wajib diisi',
+                'nik.digits' => 'NIK harus 16 digit',
+                'nik.unique' => 'NIK sudah terdaftar',
+                'foto_ktp.required' => 'Foto KTP wajib diisi',
             ]);
 
             $fotoKtpPath = null;
             if ($req->hasFile('foto_ktp')) {
-                $fotoKtpPath = $req->file('foto_ktp')->store('ktp', 'public');
+                $file = $req->file('foto_ktp');
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('storage/ktp'), $filename);
+                $fotoKtpPath = 'ktp/' . $filename;
             }
 
             $user = User::create([
