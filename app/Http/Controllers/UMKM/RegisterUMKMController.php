@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Http;
 
 class RegisterUMKMController extends Controller
 {
@@ -90,6 +91,18 @@ class RegisterUMKMController extends Controller
             ]);
 
             DB::commit();
+
+            $adminNumbers = explode(',', env('ADMIN_WA_NUMBERS', ''));
+            foreach ($adminNumbers as $number) {
+                try {
+                    Http::post('http://wabot.tukarjual.com/send', [
+                        'to' => trim($number),
+                        'message' => "Halo Admin, ada pendaftar UMKM baru.\n\nNama: {$validatedData['nama']}\nNIK: {$validatedData['nik']}\nNo Telepon: {$validatedData['telepon']}\nNama Usaha: {$validatedData['namaUsaha']}",
+                    ]);
+                } catch (\Throwable $th) {
+                    // ignore error
+                }
+            }
 
             return to_route('registerUMKM.waiting');
         } catch (\Throwable $th) {
