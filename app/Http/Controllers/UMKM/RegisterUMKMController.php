@@ -37,7 +37,7 @@ class RegisterUMKMController extends Controller
                 'noIjinUsaha' => 'required',
                 'noNPWP' => 'required',
                 'nik' => 'required|digits:16|unique:pelaku_umkms,nik',
-                'foto_ktp' => 'required',
+                'foto_ktp' => 'required|max:5120',
             ], [
                 'nama.required' => 'Nama wajib diisi',
                 'email.required' => 'Email wajib diisi',
@@ -57,6 +57,7 @@ class RegisterUMKMController extends Controller
                 'nik.digits' => 'NIK harus 16 digit',
                 'nik.unique' => 'NIK sudah terdaftar',
                 'foto_ktp.required' => 'Foto KTP wajib diisi',
+                'foto_ktp.max' => 'Ukuran Foto KTP maksimal 5 MB',
             ]);
 
             $fotoKtpPath = null;

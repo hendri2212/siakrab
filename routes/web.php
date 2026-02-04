@@ -150,20 +150,20 @@ Route::middleware(['user.role:admin'])->group(function () {
 });
 
 // UMKMADMIN
-Route::get('/umkm-admin/dashboard', function () {
-    $profileUMKM = PelakuUMKM::where('user_id', auth()->user()->id)->first();
-    $productsUMKM = ProductUMKM::where('pelaku_umkm_id', $profileUMKM->id)->get();
-    $productCounts = count($productsUMKM);
-    $uniqueCategories = $productsUMKM->pluck('kategori')->unique();
-    $categoryCounts = $uniqueCategories->count();
-
-    return Inertia::render('UMKMAdmin/Dashboard', [
-        'profileUMKM' => $profileUMKM,
-        'productCounts' => $productCounts,
-        'categoryCounts' => $categoryCounts
-    ]);
-})->name('umkmAdmin.dashboard');
 Route::middleware(['user.role:umkmAdmin'])->group(function () {
+    Route::get('/umkm-admin/dashboard', function () {
+        $profileUMKM = PelakuUMKM::where('user_id', auth()->user()->id)->first();
+        $productsUMKM = ProductUMKM::where('pelaku_umkm_id', $profileUMKM->id)->get();
+        $productCounts = count($productsUMKM);
+        $uniqueCategories = $productsUMKM->pluck('kategori')->unique();
+        $categoryCounts = $uniqueCategories->count();
+
+        return Inertia::render('UMKMAdmin/Dashboard', [
+            'profileUMKM' => $profileUMKM,
+            'productCounts' => $productCounts,
+            'categoryCounts' => $categoryCounts
+        ]);
+    })->name('umkmAdmin.dashboard');
     Route::get('/umkm-admin/products-management', [ProductUMKMController::class, 'show'])->name('productUMKM.show');
     Route::post('/umkm-admin/products-management/store', [ProductUMKMController::class, 'store'])->name('productUMKM.store');
     Route::post('/umkm-admin/products-management/update/{id}', [ProductUMKMController::class, 'update'])->name('productUMKM.update');
