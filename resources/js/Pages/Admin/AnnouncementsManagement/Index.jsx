@@ -38,7 +38,7 @@ export default function AnnouncementsManagement({ listPengumuman }) {
             cta={
                 <Button
                     variant={"primary"}
-                    text={"Buat Pengumuman"}
+                    text={"Pengumuman"}
                     icon={<BsPlusLg />}
                     onClick={() => {
                         setShowModal((show) => !show);

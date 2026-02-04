@@ -73,26 +73,23 @@ export default function AdminLayout({ children, cta }) {
         <>
             <Head title="Admin" />
 
-            {/* Sticky Header with scroll-aware background */}
+            {/* Sticky Header with rounded bottom design */}
             <header
-                className={`sticky top-0 z-40 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 transition-all duration-300 ${isScrolled
-                    ? "bg-white/95 backdrop-blur-md shadow-md"
-                    : "bg-transparent"
-                    }`}
+                className={`sticky top-0 z-40 px-6 pt-[max(env(safe-area-inset-top),24px)] pb-6 bg-white rounded-b-[32px] shadow-lg shadow-gray-100 transition-all duration-300`}
             >
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className={`font-bold text-xl transition-all duration-300 ${isScrolled ? "text-gray-800" : "text-gray-900"
-                            }`}>
+                        <h1 className="font-bold text-2xl text-gray-800 tracking-tight">
                             {headerTitle}
                         </h1>
+                        <p className="text-xs text-gray-500 font-medium mt-0.5">Admin Portal</p>
                     </div>
                     <div>{cta}</div>
                 </div>
             </header>
 
             {/* page container with bottom padding to avoid being overlapped by the fixed bottom nav */}
-            <section className="min-h-screen w-full px-3 pb-24">
+            <section className="min-h-screen w-full px-4 pb-32 pt-6 bg-gray-50 rounded-t-[32px]">
                 <main>{children}</main>
             </section>
 

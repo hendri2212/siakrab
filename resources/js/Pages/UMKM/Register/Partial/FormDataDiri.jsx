@@ -1,5 +1,6 @@
 import InputError from "@/Components/InputError";
 import TextInput from "@/Components/TextInput";
+import imageCompression from "browser-image-compression";
 
 export default function FormDataDiri({
     nama,
@@ -12,9 +13,35 @@ export default function FormDataDiri({
     errorMessage,
     errors,
 }) {
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0] || null;
-        setData("foto_ktp", file);
+
+        if (file) {
+            try {
+                const options = {
+                    maxSizeMB: 1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                };
+
+                // Show simple indication (optional, can be improved with state)
+                const compressedFile = await imageCompression(file, options);
+
+                // Create a new File object to preserve the name (library sometimes blobs it without name)
+                const finalFile = new File([compressedFile], file.name, {
+                    type: compressedFile.type,
+                    lastModified: new Date().getTime(),
+                });
+
+                setData("foto_ktp", finalFile);
+            } catch (error) {
+                console.error("Compression failed:", error);
+                // Fallback to original file if compression fails
+                setData("foto_ktp", file);
+            }
+        } else {
+            setData("foto_ktp", null);
+        }
     };
 
     return (
