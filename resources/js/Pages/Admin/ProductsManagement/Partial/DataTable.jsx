@@ -5,6 +5,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    getExpandedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, X } from "lucide-react";
@@ -31,9 +32,35 @@ import { getColumns } from "./Columns";
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
-    const [columnVisibility, setColumnVisibility] = React.useState();
+    const [columnVisibility, setColumnVisibility] = React.useState({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
+    const [expanded, setExpanded] = React.useState({});
+
+    // Responsive Visibility Effect
+    React.useEffect(() => {
+        // Function to check window size and hide columns
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setColumnVisibility({
+                    kategori: false,
+                    deskripsi: false,
+                    harga_start: false,
+                    harga_end: false,
+                    harga_fix: false, // Hide all prices on mobile, show in expanded
+                    // Keep visible: select, expander, thumbnail, nama, actions
+                });
+            } else {
+                setColumnVisibility({}); // Reset to all visible on desktop
+            }
+        };
+
+        // Initial check
+        handleResize();
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // State untuk image modal
     const [selectedImage, setSelectedImage] = React.useState(null);
@@ -67,10 +94,12 @@ export function DataTable({ data }) {
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         onGlobalFilterChanged: setGlobalFilter,
         onPaginationChange: setPagination,
+        onExpandedChange: setExpanded,
         state: {
             sorting,
             columnFilters,
@@ -78,13 +107,23 @@ export function DataTable({ data }) {
             rowSelection,
             globalFilter,
             pagination,
+            expanded,
         },
     });
 
+    // Format Rupiah Helper
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(number);
+    };
+
     return (
-        <div className="w-full">
-            <div className="flex items-center pb-3">
-                <div className="w-[20rem]">
+        <div className="w-full space-y-4">
+            <div className="flex items-center justify-between py-4">
+                <div className="w-full md:w-[20rem]">
                     <TextInput
                         label="Search"
                         placeholder="Search..."
@@ -93,33 +132,39 @@ export function DataTable({ data }) {
                         className="w-full"
                     />
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto rounded-xl py-5 ml-2">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                );
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="hidden md:block">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="ml-auto rounded-xl py-5 ml-2"
+                            >
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {table
+                                .getAllColumns()
+                                .filter((column) => column.getCanHide())
+                                .map((column) => {
+                                    return (
+                                        <DropdownMenuCheckboxItem
+                                            key={column.id}
+                                            className="capitalize"
+                                            checked={column.getIsVisible()}
+                                            onCheckedChange={(value) =>
+                                                column.toggleVisibility(!!value)
+                                            }
+                                        >
+                                            {column.id}
+                                        </DropdownMenuCheckboxItem>
+                                    );
+                                })}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -144,21 +189,86 @@ export function DataTable({ data }) {
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={
-                                        row.getIsSelected() && "selected"
-                                    }
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
+                                <React.Fragment key={row.id}>
+                                    <TableRow
+                                        data-state={
+                                            row.getIsSelected() && "selected"
+                                        }
+                                        className={
+                                            row.getIsExpanded()
+                                                ? "bg-muted/50"
+                                                : ""
+                                        }
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                    {row.getIsExpanded() && (
+                                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                                            <TableCell
+                                                colSpan={
+                                                    row.getVisibleCells().length
+                                                }
+                                            >
+                                                <div className="grid gap-4 p-4 text-sm animate-in slide-in-from-top-2 duration-300">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground text-xs uppercase">
+                                                                Kategori
+                                                            </p>
+                                                            <div className="px-2 py-1 rounded bg-white border w-fit">
+                                                                {
+                                                                    row.original
+                                                                        .kategori
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground text-xs uppercase">
+                                                                Harga
+                                                            </p>
+                                                            <p className="font-medium text-green-600">
+                                                                {row.original
+                                                                    .harga_fix
+                                                                    ? formatRupiah(
+                                                                        row
+                                                                            .original
+                                                                            .harga_fix
+                                                                    )
+                                                                    : `${formatRupiah(
+                                                                        row
+                                                                            .original
+                                                                            .harga_start
+                                                                    )} - ${formatRupiah(
+                                                                        row
+                                                                            .original
+                                                                            .harga_end
+                                                                    )}`}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <p className="font-semibold text-muted-foreground text-xs uppercase">
+                                                            Deskripsi
+                                                        </p>
+                                                        <p className="whitespace-pre-wrap text-gray-700 bg-white p-2 rounded border">
+                                                            {
+                                                                row.original
+                                                                    .deskripsi
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </React.Fragment>
                             ))
                         ) : (
                             <TableRow>
@@ -173,10 +283,13 @@ export function DataTable({ data }) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-between sm:justify-end gap-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    Page {table.getState().pagination.pageIndex + 1} of{" "}
-                    {table.getPageCount()} | Total {table.getFilteredRowModel().rows.length} rows
+                    <span className="hidden sm:inline">
+                        Page {table.getState().pagination.pageIndex + 1} of{" "}
+                        {table.getPageCount()} |{" "}
+                    </span>
+                    Total {table.getFilteredRowModel().rows.length} rows
                 </div>
                 <div className="space-x-2">
                     <Button

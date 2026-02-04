@@ -3,7 +3,7 @@ import { formatRupiah } from "@/Utils/formatRupiah";
 
 import RowActions from "./RowActions";
 
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -26,6 +26,30 @@ export const getColumns = ({ onImageClick }) => [
                 aria-label="Select row"
             />
         ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        id: "expander",
+        header: () => null,
+        cell: ({ row }) => {
+            return (
+                <button
+                    type="button"
+                    className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+                    style={{
+                        transform: row.getIsExpanded() ? "rotate(90deg)" : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        row.toggleExpanded();
+                    }}
+                >
+                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                </button>
+            );
+        },
         enableSorting: false,
         enableHiding: false,
     },
