@@ -10,7 +10,14 @@ const roles = [
     { name: "Pelaku UMKM", value: "umkm" },
 ];
 
-export default function Form({ name, email, role, setData, errors }) {
+export default function Form({
+    name,
+    email,
+    role,
+    setData,
+    errors,
+    passwordRequired = true,
+}) {
     const [selectedRole, setSelectedRole] = useState(role || "Pilih Role");
 
     return (
@@ -41,8 +48,12 @@ export default function Form({ name, email, role, setData, errors }) {
                 <TextInput
                     type="password"
                     label="Password"
-                    placeholder="Password"
-                    required
+                    placeholder={
+                        passwordRequired
+                            ? "Password"
+                            : "Kosongkan jika tidak diganti"
+                    }
+                    required={passwordRequired}
                     onChange={(e) => setData("password", e.target.value)}
                 />
                 <InputError message={errors["password"]} />

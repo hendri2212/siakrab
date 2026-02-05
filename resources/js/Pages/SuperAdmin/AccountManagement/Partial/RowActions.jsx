@@ -38,7 +38,7 @@ export default function RowActions({ row }) {
         setData({
             name: user.name,
             email: user.email,
-            password: user.password,
+            password: "",
             role: user.role,
         });
         setAction("update");
@@ -118,7 +118,12 @@ export default function RowActions({ row }) {
                                 <FaEdit size={25} />
                                 <span>Edit Akun</span>
                             </h1>
-                            <Form {...data} setData={setData} errors={errors} />
+                            <Form
+                                {...data}
+                                setData={setData}
+                                errors={errors}
+                                passwordRequired={false}
+                            />
                             <div className="mt-5">
                                 {processing ? (
                                     <Loading />

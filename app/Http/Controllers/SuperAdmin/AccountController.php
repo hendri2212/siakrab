@@ -53,9 +53,13 @@ class AccountController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($id),
             ],
-            'password' => ['required', Rules\Password::defaults()],
+            'password' => ['nullable', Rules\Password::defaults()],
             'role' => 'required'
         ]);
+
+        if (!$req->filled('password')) {
+            unset($validatedData['password']);
+        }
 
         $user->update($validatedData);
 
