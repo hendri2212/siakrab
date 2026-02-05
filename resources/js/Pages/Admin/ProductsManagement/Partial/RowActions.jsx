@@ -33,7 +33,7 @@ import { BiBlock } from "react-icons/bi";
 
 import { listKategori } from "@/Constants";
 
-export default function RowActions({ row }) {
+export default function RowActions({ row, inline = false }) {
     const product = row.original;
 
     const [showModal, setShowModal] = useState(false);
@@ -273,25 +273,43 @@ export default function RowActions({ row }) {
 
     return (
         <>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    {/* <DropdownMenuItem>Lihat Detail</DropdownMenuItem> */}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleEdit}>
-                        Edit Data
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleDelete}>
-                        Delete Data
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            {inline ? (
+                <div className="flex flex-col gap-2 w-full">
+                    <MyButton
+                        type={"button"}
+                        variant={"primary"}
+                        text={"Edit"}
+                        className="py-1.5 px-3 text-xs w-full"
+                        onClick={handleEdit}
+                    />
+                    <MyButton
+                        type={"button"}
+                        text={"Delete"}
+                        className="py-1.5 px-3 text-xs border-red-500 text-red-600 hover:bg-red-50 w-full"
+                        onClick={handleDelete}
+                    />
+                </div>
+            ) : (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        {/* <DropdownMenuItem>Lihat Detail</DropdownMenuItem> */}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleEdit}>
+                            Edit Data
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleDelete}>
+                            Delete Data
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
 
             <Modal
                 maxWidth="lg"
@@ -320,7 +338,7 @@ export default function RowActions({ row }) {
                                         <div
                                             className={
                                                 selectedKategori ===
-                                                "Pilih Kategori"
+                                                    "Pilih Kategori"
                                                     ? "text-gray-500"
                                                     : ""
                                             }
@@ -396,8 +414,8 @@ export default function RowActions({ row }) {
                                                         setCompletedCrop(c)
                                                     }
                                                     aspect={aspect}
-                                                    // minWidth={400}
-                                                    // minHeight={200}
+                                                // minWidth={400}
+                                                // minHeight={200}
                                                 >
                                                     <img
                                                         ref={imgRef}
@@ -455,18 +473,18 @@ export default function RowActions({ row }) {
                                     <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
                                         <div className="flex items-center gap-x-3 text-gray-500">
                                             {images.length > 0 ||
-                                            (product.images !== null &&
-                                                JSON.parse(product.images)
-                                                    .length > 0) ? (
+                                                (product.images !== null &&
+                                                    JSON.parse(product.images)
+                                                        .length > 0) ? (
                                                 <TbArrowsExchange2 />
                                             ) : (
                                                 <BsPlusLg />
                                             )}
                                             <span>
                                                 {images.length > 0 ||
-                                                (product.images !== null &&
-                                                    JSON.parse(product.images)
-                                                        .length > 0)
+                                                    (product.images !== null &&
+                                                        JSON.parse(product.images)
+                                                            .length > 0)
                                                     ? "Ganti"
                                                     : "Upload"}{" "}
                                                 Gambar Lainnya (Multiple)
@@ -484,46 +502,46 @@ export default function RowActions({ row }) {
 
                                 {images.length > 0
                                     ? images.map((image, i) => (
-                                          <div
-                                              key={i}
-                                              className="p-3 border rounded-md mt-3"
-                                          >
-                                              <div className="h-[5rem] flex gap-x-5">
-                                                  <div>
-                                                      <img
-                                                          src={image}
-                                                          alt="Preview"
-                                                          className="h-full"
-                                                      />
-                                                  </div>
-                                                  <p className="text-gray-500">
-                                                      {imagesName[i]}
-                                                  </p>
-                                              </div>
-                                          </div>
-                                      ))
+                                        <div
+                                            key={i}
+                                            className="p-3 border rounded-md mt-3"
+                                        >
+                                            <div className="h-[5rem] flex gap-x-5">
+                                                <div>
+                                                    <img
+                                                        src={image}
+                                                        alt="Preview"
+                                                        className="h-full"
+                                                    />
+                                                </div>
+                                                <p className="text-gray-500">
+                                                    {imagesName[i]}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))
                                     : product.images !== null &&
-                                      JSON.parse(product.images).map(
-                                          (image, i) => (
-                                              <div
-                                                  key={i}
-                                                  className="p-3 border rounded-md mt-3"
-                                              >
-                                                  <div className="h-[5rem] flex gap-x-5">
-                                                      <div>
-                                                          <img
-                                                              src={`/images/uploads/products/${image}`}
-                                                              alt="Preview"
-                                                              className="h-full"
-                                                          />
-                                                      </div>
-                                                      <p className="text-gray-500">
-                                                          {image}
-                                                      </p>
-                                                  </div>
-                                              </div>
-                                          )
-                                      )}
+                                    JSON.parse(product.images).map(
+                                        (image, i) => (
+                                            <div
+                                                key={i}
+                                                className="p-3 border rounded-md mt-3"
+                                            >
+                                                <div className="h-[5rem] flex gap-x-5">
+                                                    <div>
+                                                        <img
+                                                            src={`/images/uploads/products/${image}`}
+                                                            alt="Preview"
+                                                            className="h-full"
+                                                        />
+                                                    </div>
+                                                    <p className="text-gray-500">
+                                                        {image}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    )}
                             </div>
                             <div>
                                 <TextInput

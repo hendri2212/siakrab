@@ -35,7 +35,7 @@ import { columns } from "./Columns";
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
-    const [selectedRow, setSelectedRow] = React.useState(null);
+    const [expandedId, setExpandedId] = React.useState(null);
     const [columnVisibility, setColumnVisibility] = React.useState();
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
@@ -67,7 +67,7 @@ export function DataTable({ data }) {
         },
     });
 
-    const handleVerify = (status) => {
+    const handleVerify = (status, userId) => {
         const role = status === "Terima" ? "umkmAdmin" : "rejected";
         const message =
             status === "Terima"
@@ -75,12 +75,12 @@ export function DataTable({ data }) {
                 : "Berhasil memverifikasi pendaftaran UMKM dengan status ditolak.";
 
         router.post(
-            route("verifyUMKM.update", selectedRow.user_id),
+            route("verifyUMKM.update", userId),
             { role },
             {
                 onSuccess: () => {
                     toast.success(message);
-                    setSelectedRow(null); // Close detail view on success maybe? Or keep it open.
+                    setExpandedId(null);
                 },
                 onError: () => {
                     toast.error("Gagal memverifikasi pendaftaran UMKM.");
@@ -148,159 +148,20 @@ export function DataTable({ data }) {
                 </div>
             </div>
 
-            {selectedRow && (
-                <div className="p-4 sm:p-6 border rounded-xl bg-white shadow-sm space-y-6 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="flex justify-between items-start border-b pb-4">
-                        <div>
-                            <h3 className="text-xl font-bold text-gray-900">
-                                {selectedRow.nama_usaha || "Tanpa Nama Usaha"}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                                Detail Lengkap Data UMKM
-                            </p>
-                        </div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedRow(null)}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            Tutup
-                        </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <DetailItem
-                            label="Status"
-                            value={
-                                <span
-                                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${selectedRow.user?.role === "umkmAdmin"
-                                        ? "bg-green-100 text-green-700"
-                                        : selectedRow.user?.role ===
-                                            "rejected"
-                                            ? "bg-red-100 text-red-700"
-                                            : "bg-gray-100 text-gray-700"
-                                        }`}
-                                >
-                                    {selectedRow.user?.role === "umkmAdmin"
-                                        ? "Aktif"
-                                        : selectedRow.user?.role === "rejected"
-                                            ? "Ditolak"
-                                            : "Pending"}
-                                </span>
-                            }
-                        />
-                        <DetailItem
-                            label="Nama Pemilik"
-                            value={selectedRow.user?.name}
-                        />
-                        <DetailItem
-                            label="NIK"
-                            value={selectedRow.nik}
-                        />
-                        <DetailItem
-                            label="Email"
-                            value={selectedRow.user?.email}
-                        />
-                        <DetailItem
-                            label="Nama Usaha"
-                            value={selectedRow.nama_usaha}
-                        />
-                        <DetailItem
-                            label="Jenis Usaha"
-                            value={selectedRow.jenis_usaha}
-                        />
-                        <DetailItem
-                            label="Bidang Usaha"
-                            value={selectedRow.bidang_usaha}
-                        />
-                        <DetailItem
-                            label="Produk"
-                            value={selectedRow.produk}
-                        />
-                        <DetailItem label="Merek" value={selectedRow.merk} />
-                        <DetailItem
-                            label="Alamat Usaha"
-                            value={selectedRow.alamat_usaha}
-                        />
-                        <DetailItem
-                            label="Alamat Rumah"
-                            value={selectedRow.alamat_rumah}
-                        />
-                        <DetailItem
-                            label="Kecamatan"
-                            value={selectedRow.kecamatan}
-                        />
-                        <DetailItem
-                            label="Jumlah Tenaga Kerja"
-                            value={
-                                selectedRow.jumlah_tenaga_kerja
-                                    ? `${selectedRow.jumlah_tenaga_kerja} Orang`
-                                    : "-"
-                            }
-                        />
-                        <DetailItem
-                            label="Nomor Izin Usaha"
-                            value={selectedRow.no_ijin_usaha}
-                        />
-                        <DetailItem
-                            label="Nomor NPWP"
-                            value={selectedRow.no_npwp}
-                        />
-                    </div>
-
-                    {selectedRow.foto_ktp && (
-                        <div className="border-t pt-4">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                                Foto KTP
-                            </p>
-                            <div className="overflow-hidden rounded-lg border bg-gray-50 max-w-sm">
-                                <img
-                                    src={`/storage/${selectedRow.foto_ktp}`}
-                                    alt="Foto KTP"
-                                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-                        <Button
-                            variant="destructive"
-                            className="bg-red-500 hover:bg-red-600 text-white flex-1 sm:flex-none justify-center"
-                            onClick={() => handleVerify("Tolak")}
-                        >
-                            <BiBlock className="mr-2 h-4 w-4" />
-                            Tolak
-                        </Button>
-                        <Button
-                            className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none justify-center"
-                            onClick={() => handleVerify("Terima")}
-                        >
-                            <FaCheck className="mr-2 h-4 w-4" />
-                            Terima
-                        </Button>
-                    </div>
-                </div>
-            )}
-
-            {/* Mobile Card View */}
-            <div className="grid grid-cols-1 gap-4 md:hidden">
+            {/* Card View (Mobile & Desktop) */}
+            <div className="grid grid-cols-1 gap-4">
                 {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                         <div
                             key={row.id}
-                            className={`p-4 border rounded-xl bg-white shadow-sm flex flex-col gap-3 cursor-pointer transition-all active:scale-[0.99] touch-manipulation ${row.original.id === selectedRow?.id
+                            className={`p-4 border rounded-xl bg-white shadow-sm flex flex-col gap-3 cursor-pointer transition-all active:scale-[0.99] touch-manipulation ${row.original.id === expandedId
                                 ? "ring-2 ring-primary border-primary bg-blue-50/30"
                                 : "hover:border-gray-300"
                                 }`}
                             onClick={() => {
-                                setSelectedRow(row.original);
-                                // Scroll to top of table/detail view smoothly
-                                window.scrollTo({
-                                    top: 100,
-                                    behavior: "smooth",
-                                });
+                                setExpandedId((current) =>
+                                    current === row.original.id ? null : row.original.id
+                                );
                             }}
                         >
                             <div className="flex justify-between items-start gap-2">
@@ -351,9 +212,128 @@ export function DataTable({ data }) {
                             </div>
                             <div className="pt-3 border-t mt-1">
                                 <span className="text-sm font-semibold text-primary flex items-center justify-center w-full">
-                                    Lihat Detail & Verifikasi
+                                    {expandedId === row.original.id
+                                        ? "Tutup Detail"
+                                        : "Lihat Detail & Verifikasi"}
                                 </span>
                             </div>
+
+                            {expandedId === row.original.id && (
+                                <div className="pt-3 mt-1 border-t space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <DetailItem
+                                            label="Status"
+                                            value={
+                                                <span
+                                                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${row.original.user?.role === "umkmAdmin"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : row.original.user?.role ===
+                                                            "rejected"
+                                                            ? "bg-red-100 text-red-700"
+                                                            : "bg-gray-100 text-gray-700"
+                                                        }`}
+                                                >
+                                                    {row.original.user?.role === "umkmAdmin"
+                                                        ? "Aktif"
+                                                        : row.original.user?.role === "rejected"
+                                                            ? "Ditolak"
+                                                            : "Pending"}
+                                                </span>
+                                            }
+                                        />
+                                        <DetailItem
+                                            label="Nama Pemilik"
+                                            value={row.original.user?.name}
+                                        />
+                                        <DetailItem label="NIK" value={row.original.nik} />
+                                        <DetailItem
+                                            label="Email"
+                                            value={row.original.user?.email}
+                                        />
+                                        <DetailItem
+                                            label="Nama Usaha"
+                                            value={row.original.nama_usaha}
+                                        />
+                                        <DetailItem
+                                            label="Jenis Usaha"
+                                            value={row.original.jenis_usaha}
+                                        />
+                                        <DetailItem
+                                            label="Bidang Usaha"
+                                            value={row.original.bidang_usaha}
+                                        />
+                                        <DetailItem label="Produk" value={row.original.produk} />
+                                        <DetailItem label="Merek" value={row.original.merk} />
+                                        <DetailItem
+                                            label="Alamat Usaha"
+                                            value={row.original.alamat_usaha}
+                                        />
+                                        <DetailItem
+                                            label="Alamat Rumah"
+                                            value={row.original.alamat_rumah}
+                                        />
+                                        <DetailItem
+                                            label="Kecamatan"
+                                            value={row.original.kecamatan}
+                                        />
+                                        <DetailItem
+                                            label="Jumlah Tenaga Kerja"
+                                            value={
+                                                row.original.jumlah_tenaga_kerja
+                                                    ? `${row.original.jumlah_tenaga_kerja} Orang`
+                                                    : "-"
+                                            }
+                                        />
+                                        <DetailItem
+                                            label="Nomor Izin Usaha"
+                                            value={row.original.no_ijin_usaha}
+                                        />
+                                        <DetailItem
+                                            label="Nomor NPWP"
+                                            value={row.original.no_npwp}
+                                        />
+                                    </div>
+
+                                    {row.original.foto_ktp && (
+                                        <div>
+                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                                                Foto KTP
+                                            </p>
+                                            <div className="overflow-hidden rounded-lg border bg-gray-50">
+                                                <img
+                                                    src={`/storage/${row.original.foto_ktp}`}
+                                                    alt="Foto KTP"
+                                                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <Button
+                                            variant="destructive"
+                                            className="bg-red-500 hover:bg-red-600 text-white flex-1 sm:flex-none justify-center"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVerify("Tolak", row.original.user_id);
+                                            }}
+                                        >
+                                            <BiBlock className="mr-2 h-4 w-4" />
+                                            Tolak
+                                        </Button>
+                                        <Button
+                                            className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none justify-center"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVerify("Terima", row.original.user_id);
+                                            }}
+                                        >
+                                            <FaCheck className="mr-2 h-4 w-4" />
+                                            Terima
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))
                 ) : (
@@ -364,7 +344,7 @@ export function DataTable({ data }) {
             </div>
 
             {/* Desktop Table View */}
-            <div className="rounded-md border hidden md:block">
+            <div className="rounded-md border hidden">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -393,11 +373,17 @@ export function DataTable({ data }) {
                                     data-state={
                                         row.getIsSelected() && "selected"
                                     }
-                                    className={`cursor-pointer hover:bg-muted ${selectedRow?.id === row.original.id
+                                    className={`cursor-pointer hover:bg-muted ${expandedId === row.original.id
                                         ? "bg-muted"
                                         : ""
                                         }`}
-                                    onClick={() => setSelectedRow(row.original)}
+                                    onClick={() =>
+                                        setExpandedId((current) =>
+                                            current === row.original.id
+                                                ? null
+                                                : row.original.id
+                                        )
+                                    }
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

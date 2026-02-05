@@ -8,15 +8,9 @@ import {
     getExpandedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     Table,
     TableBody,
@@ -28,6 +22,7 @@ import {
 
 import TextInput from "@/Components/TextInput";
 import { getColumns } from "./Columns";
+import RowActions from "./RowActions";
 
 export function DataTable({ data }) {
     const [sorting, setSorting] = React.useState([]);
@@ -36,6 +31,7 @@ export function DataTable({ data }) {
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
     const [expanded, setExpanded] = React.useState({});
+    const [expandedId, setExpandedId] = React.useState(null);
 
     // Responsive Visibility Effect
     React.useEffect(() => {
@@ -67,7 +63,7 @@ export function DataTable({ data }) {
     const [showImageModal, setShowImageModal] = React.useState(false);
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 24,
     });
 
     const handleImageClick = (imageUrl) => {
@@ -120,10 +116,17 @@ export function DataTable({ data }) {
         }).format(number);
     };
 
+    const truncateWords = (text, limit) => {
+        if (!text) return "";
+        const words = text.trim().split(/\s+/);
+        if (words.length <= limit) return text;
+        return `${words.slice(0, limit).join(" ")}...`;
+    };
+
     return (
         <div className="w-full space-y-4">
             <div className="flex items-center justify-between py-4">
-                <div className="w-full md:w-[20rem]">
+                <div className="w-full">
                     <TextInput
                         label="Search"
                         placeholder="Search..."
@@ -132,40 +135,98 @@ export function DataTable({ data }) {
                         className="w-full"
                     />
                 </div>
-                <div className="hidden md:block">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="ml-auto rounded-xl py-5 ml-2"
-                            >
-                                Columns <ChevronDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {table
-                                .getAllColumns()
-                                .filter((column) => column.getCanHide())
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
-                                        >
-                                            {column.id}
-                                        </DropdownMenuCheckboxItem>
-                                    );
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
             </div>
 
-            <div className="rounded-md border">
+            {/* Card View (Mobile-First, Desktop Friendly) */}
+            <div className="grid grid-cols-3 gap-2">
+                {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => {
+                        const product = row.original;
+                        const isExpanded = expandedId === product.id;
+                        const imageUrl = "/images/uploads/products/" + product.thumbnail;
+
+                        return (
+                            <div
+                                key={row.id}
+                                className={`border rounded-xl bg-white shadow-sm flex flex-col cursor-pointer transition-all active:scale-[0.99] touch-manipulation ${isExpanded
+                                    ? "ring-2 ring-primary border-primary bg-blue-50/30"
+                                    : "hover:border-gray-300"
+                                    }`}
+                                onClick={() =>
+                                    setExpandedId((current) =>
+                                        current === product.id ? null : product.id
+                                    )
+                                }
+                            >
+                                <div
+                                    className="w-full aspect-square rounded-t-xl overflow-hidden bg-gray-50"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleImageClick(imageUrl);
+                                    }}
+                                >
+                                    <img
+                                        src={imageUrl}
+                                        alt={product.nama}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="p-2 flex flex-col">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <p className="text-sm font-bold text-gray-900 leading-tight line-clamp-1">
+                                            {truncateWords(product.nama, 4)}
+                                        </p>
+                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                        {product.kategori}
+                                    </p>
+                                    <p className="text-sm font-semibold text-green-600">
+                                        {product.harga_fix
+                                            ? formatRupiah(product.harga_fix)
+                                            : `${formatRupiah(
+                                                product.harga_start
+                                            )} - ${formatRupiah(
+                                                product.harga_end
+                                            )}`}
+                                    </p>
+
+                                    <div className="pt-2 border-t">
+                                        <span className="text-sm font-semibold text-primary flex items-center justify-center w-full">
+                                            {isExpanded
+                                                ? "Tutup Detail"
+                                                : "Detail Produk"}
+                                        </span>
+                                    </div>
+
+                                    {isExpanded && (
+                                        <div className="pt-2 border-t space-y-3">
+                                            <div className="space-y-1">
+                                                <p className="whitespace-pre-wrap text-gray-700 text-sm">
+                                                    {product.deskripsi}
+                                                </p>
+                                            </div>
+                                            <div
+                                                className="flex justify-end"
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            >
+                                                <RowActions row={row} inline />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="text-center p-8 text-muted-foreground bg-gray-50 rounded-lg border border-dashed my-4">
+                        Tidak ada data ditemukan.
+                    </div>
+                )}
+            </div>
+
+            <div className="rounded-md border hidden">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
