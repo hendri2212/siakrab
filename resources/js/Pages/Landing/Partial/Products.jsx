@@ -277,18 +277,18 @@ export default function Products({ listProdukUMKM, queryKategori }) {
                                                 product.slug ? product.slug : product.nama
                                             )}
                                         >
-                                            <div className="relative rounded-xl h-fit overflow-hidden group bg-white p-2 shadow-sm hover:shadow">
+                                            <div className="relative rounded-xl h-fit overflow-hidden group bg-white shadow-sm hover:shadow">
                                                 <img
                                                     src={`/images/uploads/products/${product.thumbnail}`}
                                                     alt="produk"
-                                                    className="rounded-t-xl h-[7rem] w-full group-hover:scale-110 duration-300"
+                                                    className="block rounded-t-xl h-[7rem] w-full object-cover group-hover:scale-110 duration-300"
                                                 />
                                                 {/* <div className="absolute top-5 left-5 flex gap-x-2">
                                                     <span className="rounded-md py-0.5 px-3 text-sm bg-dark text-white">
                                                         {product.kategori}
                                                     </span>
                                                 </div> */}
-                                                <div className="min-h-[7rem] relative">
+                                                <div className="min-h-[7rem] relative p-2">
                                                     <h2 className="font-bold [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical] overflow-hidden min-h-[2.5rem]">
                                                         {product.nama}
                                                     </h2>
