@@ -289,33 +289,31 @@ export default function Products({ listProdukUMKM, queryKategori }) {
                                                     </span>
                                                 </div> */}
                                                 <div className="min-h-[7rem] relative p-2">
-                                                    <h2 className="font-bold [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical] overflow-hidden min-h-[2.5rem]">
+                                                    <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
                                                         {product.nama}
-                                                    </h2>
-                                                    <div className="min-h-[2.5rem] flex items-center flex-wrap leading-tight">
+                                                    </h3>
+                                                    <p className="text-sm font-semibold text-blue-600 mt-1">
                                                         {product.harga_fix !==
                                                             null &&
                                                             product.harga_fix !==
                                                             "" ? (
-                                                            <span className="text-gray-500">
-                                                                {formatRupiah(
-                                                                    product.harga_fix
-                                                                )}
-                                                            </span>
+                                                            formatRupiah(
+                                                                product.harga_fix
+                                                            )
                                                         ) : (
                                                             <>
-                                                                <span className="text-gray-500 text-sm">
-                                                                    {formatRupiah(product.harga_start)}
-                                                                </span>
+                                                                {formatRupiah(product.harga_start)}
                                                                 <span> - </span>
-                                                                <span className="text-gray-500 text-sm">
-                                                                    {formatRupiah(product.harga_end)}
-                                                                </span>
+                                                                {formatRupiah(product.harga_end)}
                                                             </>
                                                         )}
+                                                    </p>
+                                                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                                                        <span>❤️ {product.likes_count || 0}</span>
+                                                        <span>🔖 {product.saves_count || 0}</span>
                                                     </div>
-                                                    <div className="mt-3">
-                                                        {/* <span className="rounded-md py-0.5 px-2 text-sm bg-gray-100 text-dark">
+                                                    {/* <div className="mt-3"> */}
+                                                    {/* <span className="rounded-md py-0.5 px-2 text-sm bg-gray-100 text-dark">
                                                             Kec.
                                                             {
                                                                 product
@@ -323,13 +321,13 @@ export default function Products({ listProdukUMKM, queryKategori }) {
                                                                     .kecamatan
                                                             }
                                                         </span> */}
-                                                        <p className="mt-2 text-sm flex items-center gap-x-2 h-5">
+                                                    {/* <p className="mt-2 text-sm flex items-center gap-x-2 h-5">
                                                             <MdVerified size={20} className="text-primary" />
                                                             <span className="truncate">
                                                                 {product.pelaku_umkm.nama_usaha}
                                                             </span>
-                                                        </p>
-                                                    </div>
+                                                        </p> */}
+                                                    {/* </div> */}
                                                 </div>
                                             </div>
                                         </Link>

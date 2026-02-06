@@ -31,7 +31,7 @@ export default function StoreIndex({ auth, pelakuUMKM, products }) {
             <Head title={pelakuUMKM?.nama_usaha || "Toko UMKM"} />
             <Navbar auth={auth} />
 
-            <main className="min-h-screen bg-gray-50 pb-10">
+            <main className="min-h-screen pb-10">
                 {/* Store Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
                     <div className="container mx-auto px-4 py-8">
@@ -79,7 +79,8 @@ export default function StoreIndex({ auth, pelakuUMKM, products }) {
                             </div>
                         </div>
                     </div>
-
+                </div>
+                <div className="container mx-auto">
                     {/* Products Section */}
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -89,7 +90,7 @@ export default function StoreIndex({ auth, pelakuUMKM, products }) {
                     </div>
 
                     {products.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-2">
                             {products.map((product) => (
                                 <Link
                                     key={product.id}
@@ -103,7 +104,7 @@ export default function StoreIndex({ auth, pelakuUMKM, products }) {
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <div className="p-3">
+                                    <div className="p-2">
                                         <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
                                             {product.nama}
                                         </h3>
