@@ -21,7 +21,6 @@ import Modal from "@/Components/Modal";
 import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import Loading from "@/Components/Loading";
-import Checkbox from "@/Components/Checkbox";
 import TextArea from "@/Components/TextArea";
 import { BsPlusLg } from "react-icons/bs";
 import { TbArrowsExchange2 } from "react-icons/tb";
@@ -30,6 +29,7 @@ import { toast } from "react-hot-toast";
 import InputError from "@/Components/InputError";
 import { IoIosWarning } from "react-icons/io";
 import { BiBlock } from "react-icons/bi";
+import { MdClose } from "react-icons/md";
 
 import { listKategori } from "@/Constants";
 
@@ -42,13 +42,10 @@ export default function RowActions({ row, inline = false }) {
         thumbnail: null,
         nama: "",
         deskripsi: "",
-        harga_start: "",
-        harga_end: "",
         harga_fix: "",
         detail: {},
     });
     const [selectedKategori, setSelectedKategori] = useState("Pilih Kategori");
-    const [hargaType, setHargaType] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailName, setThumbnailName] = useState("");
     const [action, setAction] = useState("");
@@ -73,18 +70,8 @@ export default function RowActions({ row, inline = false }) {
             kategori: product.kategori,
             nama: product.nama,
             deskripsi: product.deskripsi,
-            harga_start: product.harga_start,
-            harga_end: product.harga_end,
-            harga_fix: product.harga_fix,
+            harga_fix: product.harga_fix || "",
         });
-
-        if (product.harga_fix !== null) {
-            setHargaType("fix");
-        }
-
-        if (product.harga_start !== null || product.harga_end !== null) {
-            setHargaType("range");
-        }
     }
 
     function handleImageUpload(e) {
@@ -318,13 +305,26 @@ export default function RowActions({ row, inline = false }) {
             >
                 {action === "update" && (
                     <>
-                        <h1 className="font-semibold text-xl mb-10 flex items-center gap-x-3">
-                            <FaEdit size={25} />
-                            <span>Edit Produk</span>
-                        </h1>
+                        {/* Header fixed */}
+                        <div className="flex-shrink-0 bg-white z-10">
+                            <div className="flex items-center justify-between px-4 py-3 border-b">
+                                <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                    <FaEdit size={18} />
+                                    <span>Edit Produk</span>
+                                </h1>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Tutup"
+                                    className="p-2 -mr-2"
+                                >
+                                    <MdClose size={20} />
+                                </button>
+                            </div>
+                        </div>
                         <form
                             onSubmit={handleUpdate}
-                            className="flex flex-col gap-y-5"
+                            className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
                         >
                             <div>
                                 <SelectInput>
@@ -565,93 +565,31 @@ export default function RowActions({ row, inline = false }) {
                                 />
                                 <InputError message={errors["deskripsi"]} />
                             </div>
-                            <div className="flex gap-x-5">
-                                <div className="flex items-center gap-x-3">
-                                    <Checkbox
-                                        id="hargaRange"
-                                        checked={hargaType === "range"}
-                                        onChange={() => setHargaType("range")}
-                                    />
-                                    <label htmlFor="hargaRange">
-                                        Harga Range
-                                    </label>
-                                </div>
-                                <div className="flex items-center gap-x-3">
-                                    <Checkbox
-                                        id="hargaFix"
-                                        checked={hargaType === "fix"}
-                                        onChange={() => setHargaType("fix")}
-                                    />
-                                    <label htmlFor="hargaFix">
-                                        Harga Tetap
-                                    </label>
-                                </div>
-                            </div>
                             <div>
-                                {hargaType !== "" && <p>Rp. </p>}
-                                {hargaType === "range" && (
-                                    <section className="grid grid-cols-2 gap-5">
-                                        <TextInput
-                                            type="number"
-                                            label="Dari Harga"
-                                            placeholder="Dari Harga"
-                                            value={data.harga_start}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_start",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_start"]}
-                                        />
-
-                                        <TextInput
-                                            type="number"
-                                            label="Hingga Harga"
-                                            placeholder="Hingga Harga"
-                                            value={data.harga_end}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_end",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_end"]}
-                                        />
-                                    </section>
-                                )}
-                                {hargaType === "fix" && (
-                                    <>
-                                        <TextInput
-                                            type="number"
-                                            label="Harga Produk"
-                                            placeholder="Harga Produk"
-                                            value={data.harga_fix}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "harga_fix",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors["harga_fix"]}
-                                        />
-                                    </>
-                                )}
+                                <TextInput
+                                    type="number"
+                                    label="Harga Produk (Rp)"
+                                    placeholder="Harga Produk"
+                                    value={data.harga_fix}
+                                    onChange={(e) =>
+                                        setData("harga_fix", e.target.value)
+                                    }
+                                />
+                                <InputError message={errors["harga_fix"]} />
                             </div>
                             {processing ? (
                                 <Loading />
                             ) : (
-                                <MyButton
-                                    variant={"primary"}
-                                    text={"Simpan"}
-                                    icon={<FaSave />}
-                                />
+                                <div className="mt-2">
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                                    >
+                                        <FaSave />
+                                        Simpan
+                                    </button>
+                                </div>
                             )}
                         </form>
                     </>
@@ -659,41 +597,58 @@ export default function RowActions({ row, inline = false }) {
 
                 {action === "delete" && (
                     <>
-                        <div className="mb-10">
-                            <h1 className="font-semibold text-xl flex items-center gap-x-3">
-                                <IoIosWarning size={25} />
-                                <span>Hapus Akun</span>
-                            </h1>
-                            <p className="mt-3">
-                                Konfirmasi hapus produk{" "}
-                                <span className="text-primary">
+                        {/* Header fixed */}
+                        <div className="flex-shrink-0 bg-white z-10">
+                            <div className="flex items-center justify-between px-4 py-3 border-b">
+                                <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                    <IoIosWarning size={18} className="text-red-500" />
+                                    <span>Hapus Produk</span>
+                                </h1>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Tutup"
+                                    className="p-2 -mr-2"
+                                >
+                                    <MdClose size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-4 py-4">
+                            <p>
+                                Apakah Anda yakin ingin menghapus produk{" "}
+                                <span className="font-semibold text-primary">
                                     {product.nama}
                                 </span>
                                 ?
                             </p>
-                        </div>
-                        <div className="flex gap-x-3 mt-10">
-                            {processing ? (
-                                <Loading />
-                            ) : (
-                                <>
-                                    <MyButton
-                                        type={"button"}
-                                        text={"Batal"}
-                                        icon={<BiBlock />}
-                                        className="w-full border hover:bg-gray-100"
-                                        onClick={() => setShowModal(false)}
-                                    />
-                                    <MyButton
-                                        type={"button"}
-                                        variant={"primary"}
-                                        text={"Hapus"}
-                                        icon={<FaTrash />}
-                                        className="w-full"
-                                        onClick={handleConfirmDelete}
-                                    />
-                                </>
-                            )}
+
+                            <div className="flex gap-x-3 mt-6">
+                                {processing ? (
+                                    <Loading />
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowModal(false)}
+                                            className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 active:scale-95 transition"
+                                        >
+                                            <BiBlock />
+                                            Batal
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleConfirmDelete}
+                                            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-3 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 active:scale-95 transition"
+                                        >
+                                            <FaTrash />
+                                            Hapus
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </>
                 )}

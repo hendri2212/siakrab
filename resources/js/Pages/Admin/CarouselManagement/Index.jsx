@@ -9,9 +9,10 @@ import TextInput from "@/Components/TextInput";
 import Loading from "@/Components/Loading";
 import InputError from "@/Components/InputError";
 import Checkbox from "@/Components/Checkbox";
-import { FaSave } from "react-icons/fa";
+import { FaSave, FaEdit } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { TbArrowsExchange2 } from "react-icons/tb";
+import { MdClose } from "react-icons/md";
 
 export default function CarouselManagement({ auth, listCarousel }) {
     const [showModal, setShowModal] = useState(false);
@@ -127,8 +128,8 @@ export default function CarouselManagement({ auth, listCarousel }) {
                         <div
                             key={carousel.id}
                             className={`relative rounded-lg overflow-hidden border ${carousel.is_active
-                                    ? "border-green-300"
-                                    : "border-gray-300 opacity-60"
+                                ? "border-green-300"
+                                : "border-gray-300 opacity-60"
                                 }`}
                         >
                             <img
@@ -155,8 +156,8 @@ export default function CarouselManagement({ auth, listCarousel }) {
                                     <button
                                         onClick={() => handleToggle(carousel.id)}
                                         className={`text-xs px-2 py-1 rounded ${carousel.is_active
-                                                ? "bg-yellow-100 text-yellow-700"
-                                                : "bg-green-100 text-green-700"
+                                            ? "bg-yellow-100 text-yellow-700"
+                                            : "bg-green-100 text-green-700"
                                             }`}
                                     >
                                         {carousel.is_active ? "Nonaktifkan" : "Aktifkan"}
@@ -186,12 +187,25 @@ export default function CarouselManagement({ auth, listCarousel }) {
             </div>
 
             <Modal maxWidth="md" show={showModal} onClose={closeModal}>
-                <h1 className="font-semibold text-xl mb-6 flex items-center gap-x-3">
-                    <BsPlusLg size={20} />
-                    <span>{editMode ? "Edit Carousel" : "Tambah Carousel"}</span>
-                </h1>
+                {/* Header fixed */}
+                <div className="flex-shrink-0 bg-white z-10">
+                    <div className="flex items-center justify-between px-4 py-3 border-b">
+                        <h1 className="font-semibold text-base flex items-center gap-x-2">
+                            {editMode ? <FaEdit size={18} /> : <BsPlusLg size={16} />}
+                            <span>{editMode ? "Edit Carousel" : "Tambah Carousel"}</span>
+                        </h1>
+                        <button
+                            type="button"
+                            onClick={closeModal}
+                            aria-label="Tutup"
+                            className="p-2 -mr-2"
+                        >
+                            <MdClose size={20} />
+                        </button>
+                    </div>
+                </div>
 
-                <form onSubmit={handleStore} className="flex flex-col gap-y-4">
+                <form onSubmit={handleStore} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                     <div>
                         <TextInput
                             label="Judul (opsional)"
@@ -257,11 +271,16 @@ export default function CarouselManagement({ auth, listCarousel }) {
                     {processing ? (
                         <Loading />
                     ) : (
-                        <Button
-                            variant={"primary"}
-                            text={"Simpan"}
-                            icon={<FaSave />}
-                        />
+                        <div className="mt-2">
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                            >
+                                <FaSave />
+                                Simpan
+                            </button>
+                        </div>
                     )}
                 </form>
             </Modal>

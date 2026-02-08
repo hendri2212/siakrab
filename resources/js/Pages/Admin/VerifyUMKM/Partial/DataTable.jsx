@@ -245,7 +245,22 @@ export function DataTable({ data }) {
                                             label="Nama Pemilik"
                                             value={row.original.user?.name}
                                         />
-                                        <DetailItem label="NIK" value={row.original.nik} />
+                                        <DetailItem
+                                            label="WhatsApp"
+                                            value={
+                                                row.original.telepon ? (
+                                                    <a
+                                                        href={`https://wa.me/62${row.original.telepon.replace(/^0/, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="text-green-600 hover:text-green-700 hover:underline"
+                                                    >
+                                                        {row.original.telepon}
+                                                    </a>
+                                                ) : null
+                                            }
+                                        />
                                         <DetailItem
                                             label="Email"
                                             value={row.original.user?.email}
@@ -292,6 +307,7 @@ export function DataTable({ data }) {
                                             label="Nomor NPWP"
                                             value={row.original.no_npwp}
                                         />
+                                        <DetailItem label="NIK" value={row.original.nik} />
                                     </div>
 
                                     {row.original.foto_ktp && (
@@ -309,26 +325,28 @@ export function DataTable({ data }) {
                                         </div>
                                     )}
 
-                                    <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="flex gap-3 justify-end">
                                         <Button
                                             variant="destructive"
-                                            className="bg-red-500 hover:bg-red-600 text-white flex-1 sm:flex-none justify-center"
+                                            size="sm"
+                                            className="bg-red-500 hover:bg-red-600 text-white"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleVerify("Tolak", row.original.user_id);
                                             }}
                                         >
-                                            <BiBlock className="mr-2 h-4 w-4" />
+                                            <BiBlock className="mr-1.5 h-4 w-4" />
                                             Tolak
                                         </Button>
                                         <Button
-                                            className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none justify-center"
+                                            size="sm"
+                                            className="bg-green-600 hover:bg-green-700 text-white"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleVerify("Terima", row.original.user_id);
                                             }}
                                         >
-                                            <FaCheck className="mr-2 h-4 w-4" />
+                                            <FaCheck className="mr-1.5 h-4 w-4" />
                                             Terima
                                         </Button>
                                     </div>

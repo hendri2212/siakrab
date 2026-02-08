@@ -7,7 +7,7 @@ export default function VerifyUMKM({ listPelakuUMKM }) {
         <AdminLayout
             cta={
                 <a href="/admin/pelaku-umkm/export">
-                    <Button variant={"primary"} text={"Export to Excel"} />
+                    <Button variant={"primary"} text={"Export Data"} />
                 </a>
             }
         >

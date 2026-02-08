@@ -233,8 +233,7 @@ export default function Dashboard({
                     show={showModal}
                     onClose={() => setShowModal(false)}
                 >
-                    <div className="sticky top-0 bg-white z-10">
-                        <div className="mx-auto h-1.5 w-10 rounded-full bg-gray-300 mt-2" />
+                    <div className="flex-shrink-0 bg-white z-10">
                         <div className="flex items-center justify-between px-4 py-3 border-b">
                             <h1 className="font-semibold text-base flex items-center gap-x-2">
                                 <FaEdit size={18} />
@@ -250,7 +249,7 @@ export default function Dashboard({
                             </button>
                         </div>
                     </div>
-                    <form onSubmit={handleUpdate} className="flex flex-col gap-3 px-1">
+                    <form onSubmit={handleUpdate} className="flex flex-col gap-3 px-4 py-3 overflow-y-auto">
                         <div>
                             <TextInput
                                 label="Nama Usaha"

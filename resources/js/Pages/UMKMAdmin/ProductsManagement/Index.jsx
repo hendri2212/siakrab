@@ -241,164 +241,159 @@ export default function ProductsManagement({ auth, listProductsUMKM, pelakuUMKM 
                 show={showModal}
                 onClose={() => setShowModal(false)}
             >
-                {/* Wrapper: Mobile-first sheet layout */}
-                <div className="max-h-[80vh] flex flex-col">
-                    {/* Drag handle + Header sticky */}
-                    <div className="sticky top-0 bg-white z-10">
-                        <div className="mx-auto h-1.5 w-10 rounded-full bg-gray-300 mt-2" />
-                        <div className="flex items-center justify-between px-4 py-3 border-b">
-                            <h1 className="font-semibold text-base flex items-center gap-x-2">
-                                <BsPlusLg size={18} />
-                                <span>Tambah Produk</span>
-                            </h1>
-                            <button
-                                type="button"
-                                onClick={() => setShowModal(false)}
-                                aria-label="Tutup"
-                                className="p-2 -mr-2"
-                            >
-                                <MdClose size={20} />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Body scrollable */}
-                    <form id="productForm" onSubmit={handleStore} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                        <div>
-                            <label>
-                                <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
-                                    <div className="flex items-center gap-x-3 text-gray-500">
-                                        {thumbnail ? (
-                                            <TbArrowsExchange2 />
-                                        ) : (
-                                            <BsPlusLg />
-                                        )}
-                                        <span>
-                                            {thumbnail ? "Ganti" : "Upload"} Gambar (Thumbnail)
-                                        </span>
-                                    </div>
-                                </div>
-                                <input type="file" hidden onChange={handleImageUpload} />
-                            </label>
-                            <InputError message={errors["thumbnail"]} />
-
-                            {thumbnail && (
-                                <div className="p-3 border rounded-md mt-3">
-                                    {croppedThumbnail === null && (
-                                        <>
-                                            <div className="max-h-[40vh] overflow-auto">
-                                                <ReactCrop
-                                                    crop={crop}
-                                                    onChange={(_, percentCrop) => setCrop(percentCrop)}
-                                                    onComplete={(c) => setCompletedCrop(c)}
-                                                    aspect={aspect}
-                                                >
-                                                    <img
-                                                        ref={imgRef}
-                                                        alt="Crop me"
-                                                        src={thumbnail}
-                                                        style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
-                                                        onLoad={onImageLoad}
-                                                    />
-                                                </ReactCrop>
-                                            </div>
-                                            <div className="mt-3 flex justify-end">
-                                                <Button type={"button"} text={"Crop"} onClick={saveCropedImage} />
-                                            </div>
-                                        </>
-                                    )}
-
-                                    <canvas
-                                        ref={previewCanvasRef}
-                                        className="mt-3 w-full h-auto"
-                                        style={{ objectFit: "contain", width: completedCrop?.width, height: completedCrop?.height }}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <label>
-                                <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
-                                    <div className="flex items-center gap-x-3 text-gray-500">
-                                        {images.length > 0 ? <TbArrowsExchange2 /> : <BsPlusLg />}
-                                        <span>
-                                            {images.length > 0 ? "Ganti" : "Upload"} Gambar Lainnya
-                                        </span>
-                                    </div>
-                                </div>
-                                <input type="file" hidden onChange={handleMultipleImageUpload} multiple />
-                            </label>
-                            <InputError message={errors["images"]} />
-
-                            {images.length > 0 &&
-                                images.map((image, i) => (
-                                    <div key={i} className="p-3 border rounded-md mt-3">
-                                        <div className="h-[5rem] flex gap-x-5">
-                                            <div>
-                                                <img src={image} alt="Preview" className="h-full" />
-                                            </div>
-                                            <p className="text-gray-500">{imagesName[i]}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-
-                        <div>
-                            <TextInput
-                                label="Nama Produk"
-                                placeholder="Nama Produk"
-                                value={data.nama}
-                                onChange={(e) => setData("nama", e.target.value)}
-                            />
-                            <InputError message={errors["nama"]} />
-                        </div>
-
-                        <div>
-                            <TextArea
-                                label="Deskripsi"
-                                placeholder="Deskripsi"
-                                value={data.deskripsi}
-                                onChange={(e) => setData("deskripsi", e.target.value)}
-                            />
-                            <InputError message={errors["deskripsi"]} />
-                        </div>
-
-                        <div className="space-y-3">
-                            <TextInput
-                                type="text"
-                                label="Harga Produk"
-                                placeholder="Harga Produk"
-                                value={data.harga_fix}
-                                onChange={(e) => {
-                                    const value = e.target.value.replace(/\D/g, "");
-                                    const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                                    setData("harga_fix", formatted);
-                                }}
-                            />
-                            <InputError message={errors["harga_fix"]} />
-                        </div>
-
-                        {/* Spacer to avoid last field hidden by sticky footer */}
-                        <div className="h-2" />
-                    </form>
-
-                    {/* Sticky footer actions */}
-                    <div className="sticky bottom-0 bg-white z-10 p-3 border-t">
-                        {processing ? (
-                            <Loading />
-                        ) : (
-                            <button
-                                type="submit"
-                                form="productForm"
-                                className="w-full inline-flex items-center justify-center gap-2 rounded-md px-4 py-3 text-white shadow-md active:scale-95 transition bg-blue-600"
-                            >
-                                <FaSave />
-                                <span className="font-semibold">Simpan</span>
-                            </button>
-                        )}
+                {/* Header fixed */}
+                <div className="flex-shrink-0 bg-white z-10">
+                    <div className="flex items-center justify-between px-4 py-3 border-b">
+                        <h1 className="font-semibold text-base flex items-center gap-x-2">
+                            <BsPlusLg size={18} />
+                            <span>Tambah Produk</span>
+                        </h1>
+                        <button
+                            type="button"
+                            onClick={() => setShowModal(false)}
+                            aria-label="Tutup"
+                            className="p-2 -mr-2"
+                        >
+                            <MdClose size={20} />
+                        </button>
                     </div>
                 </div>
+
+                {/* Body scrollable */}
+                <form id="productForm" onSubmit={handleStore} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                    <div>
+                        <label>
+                            <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
+                                <div className="flex items-center gap-x-3 text-gray-500">
+                                    {thumbnail ? (
+                                        <TbArrowsExchange2 />
+                                    ) : (
+                                        <BsPlusLg />
+                                    )}
+                                    <span>
+                                        {thumbnail ? "Ganti" : "Upload"} Gambar (Thumbnail)
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="file" hidden onChange={handleImageUpload} />
+                        </label>
+                        <InputError message={errors["thumbnail"]} />
+
+                        {thumbnail && (
+                            <div className="p-3 border rounded-md mt-3">
+                                {croppedThumbnail === null && (
+                                    <>
+                                        <div className="max-h-[40vh] overflow-auto">
+                                            <ReactCrop
+                                                crop={crop}
+                                                onChange={(_, percentCrop) => setCrop(percentCrop)}
+                                                onComplete={(c) => setCompletedCrop(c)}
+                                                aspect={aspect}
+                                            >
+                                                <img
+                                                    ref={imgRef}
+                                                    alt="Crop me"
+                                                    src={thumbnail}
+                                                    style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
+                                                    onLoad={onImageLoad}
+                                                />
+                                            </ReactCrop>
+                                        </div>
+                                        <div className="mt-3 flex justify-end">
+                                            <Button type={"button"} text={"Crop"} onClick={saveCropedImage} />
+                                        </div>
+                                    </>
+                                )}
+
+                                <canvas
+                                    ref={previewCanvasRef}
+                                    className="mt-3 w-full h-auto"
+                                    style={{ objectFit: "contain", width: completedCrop?.width, height: completedCrop?.height }}
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    <div>
+                        <label>
+                            <div className="rounded-md border border-dashed border-gray-300 h-[4rem] w-full flex justify-center items-center cursor-pointer hover:bg-gray-50 duration-300">
+                                <div className="flex items-center gap-x-3 text-gray-500">
+                                    {images.length > 0 ? <TbArrowsExchange2 /> : <BsPlusLg />}
+                                    <span>
+                                        {images.length > 0 ? "Ganti" : "Upload"} Gambar Lainnya
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="file" hidden onChange={handleMultipleImageUpload} multiple />
+                        </label>
+                        <InputError message={errors["images"]} />
+
+                        {images.length > 0 &&
+                            images.map((image, i) => (
+                                <div key={i} className="p-3 border rounded-md mt-3">
+                                    <div className="h-[5rem] flex gap-x-5">
+                                        <div>
+                                            <img src={image} alt="Preview" className="h-full" />
+                                        </div>
+                                        <p className="text-gray-500">{imagesName[i]}</p>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+
+                    <div>
+                        <TextInput
+                            label="Nama Produk"
+                            placeholder="Nama Produk"
+                            value={data.nama}
+                            onChange={(e) => setData("nama", e.target.value)}
+                        />
+                        <InputError message={errors["nama"]} />
+                    </div>
+
+                    <div>
+                        <TextArea
+                            label="Deskripsi"
+                            placeholder="Deskripsi"
+                            value={data.deskripsi}
+                            onChange={(e) => setData("deskripsi", e.target.value)}
+                        />
+                        <InputError message={errors["deskripsi"]} />
+                    </div>
+
+                    <div className="space-y-3">
+                        <TextInput
+                            type="text"
+                            label="Harga Produk"
+                            placeholder="Harga Produk"
+                            value={data.harga_fix}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, "");
+                                const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                setData("harga_fix", formatted);
+                            }}
+                        />
+                        <InputError message={errors["harga_fix"]} />
+                    </div>
+
+                    {/* Spacer to avoid last field hidden by sticky footer */}
+                    <div className="h-2" />
+
+                    {processing ? (
+                        <Loading />
+                    ) : (
+                        <div className="mt-2">
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                            >
+                                <FaSave />
+                                Simpan
+                            </button>
+                        </div>
+                    )}
+                </form>
             </Modal>
         </UMKMAdminLayout>
     );

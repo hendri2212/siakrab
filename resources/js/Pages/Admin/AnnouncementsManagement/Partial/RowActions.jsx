@@ -9,6 +9,7 @@ import Loading from "@/Components/Loading";
 import { FaEdit, FaSave, FaTrash } from "react-icons/fa";
 import { IoIosWarning } from "react-icons/io";
 import { BiBlock } from "react-icons/bi";
+import { MdClose } from "react-icons/md";
 
 import {
     DropdownMenu,
@@ -102,22 +103,37 @@ export default function RowActions({ row }) {
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 {action === "update" && (
                     <>
-                        <h1 className="font-semibold text-xl mb-10 flex items-center gap-x-3">
-                            <FaEdit size={25} />
-                            <span>Edit Berita</span>
-                        </h1>
-                        <form onSubmit={handleUpdate}>
+                        {/* Header fixed */}
+                        <div className="flex-shrink-0 bg-white z-10">
+                            <div className="flex items-center justify-between px-4 py-3 border-b">
+                                <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                    <FaEdit size={18} />
+                                    <span>Edit Pengumuman</span>
+                                </h1>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Tutup"
+                                    className="p-2 -mr-2"
+                                >
+                                    <MdClose size={20} />
+                                </button>
+                            </div>
+                        </div>
+                        <form onSubmit={handleUpdate} className="flex-1 overflow-y-auto px-4 py-4">
                             <Form {...data} errors={errors} setData={setData} />
                             <div className="mt-5">
                                 {processing ? (
                                     <Loading />
                                 ) : (
-                                    <MyButton
-                                        variant={"primary"}
-                                        text={"Simpan"}
-                                        icon={<FaSave />}
-                                        className="w-full"
-                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+                                    >
+                                        <FaSave />
+                                        Simpan
+                                    </button>
                                 )}
                             </div>
                         </form>
@@ -126,41 +142,58 @@ export default function RowActions({ row }) {
 
                 {action === "delete" && (
                     <>
-                        <div className="mb-10">
-                            <h1 className="font-semibold text-xl flex items-center gap-x-3">
-                                <IoIosWarning size={25} />
-                                <span>Hapus Berita</span>
-                            </h1>
-                            <p className="mt-3">
-                                Konfirmasi hapus berita{" "}
-                                <span className="text-primary">
+                        {/* Header fixed */}
+                        <div className="flex-shrink-0 bg-white z-10">
+                            <div className="flex items-center justify-between px-4 py-3 border-b">
+                                <h1 className="font-semibold text-base flex items-center gap-x-2">
+                                    <IoIosWarning size={18} className="text-red-500" />
+                                    <span>Hapus Pengumuman</span>
+                                </h1>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Tutup"
+                                    className="p-2 -mr-2"
+                                >
+                                    <MdClose size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-4 py-4">
+                            <p>
+                                Apakah Anda yakin ingin menghapus pengumuman{" "}
+                                <span className="font-semibold text-primary">
                                     {announcement.judul}
                                 </span>
                                 ?
                             </p>
-                        </div>
-                        <div className="flex gap-x-3 mt-10">
-                            {processing ? (
-                                <Loading />
-                            ) : (
-                                <>
-                                    <MyButton
-                                        type={"button"}
-                                        text={"Batal"}
-                                        icon={<BiBlock />}
-                                        className="w-full border hover:bg-gray-100"
-                                        onClick={() => setShowModal(false)}
-                                    />
-                                    <MyButton
-                                        type={"button"}
-                                        variant={"primary"}
-                                        text={"Hapus"}
-                                        icon={<FaTrash />}
-                                        className="w-full"
-                                        onClick={handleConfirmDelete}
-                                    />
-                                </>
-                            )}
+
+                            <div className="flex gap-x-3 mt-6">
+                                {processing ? (
+                                    <Loading />
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowModal(false)}
+                                            className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-100 active:scale-95 transition"
+                                        >
+                                            <BiBlock />
+                                            Batal
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleConfirmDelete}
+                                            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-3 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 active:scale-95 transition"
+                                        >
+                                            <FaTrash />
+                                            Hapus
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </>
                 )}
