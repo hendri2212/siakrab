@@ -1,10 +1,7 @@
 import { useEffect } from "react";
-import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
 import Loading from "@/Components/Loading";
 import Button from "@/Components/Button";
 
@@ -29,58 +26,63 @@ export default function ResetPassword({ token, email }) {
     };
 
     return (
-        <GuestLayout>
+        <div className="mx-auto w-full max-w-[420px] px-4">
             <Head title="Reset Password" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            <div className="my-3">
+                <h1 className="font-bold text-2xl">Reset Password</h1>
+                <p>
+                    Masukkan password baru anda untuk mengatur ulang password akun.
+                </p>
+            </div>
 
+            <form onSubmit={submit} className="flex flex-col gap-y-5">
+                <div>
                     <TextInput
+                        label="Email"
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="block w-full rounded-xl"
                         autoComplete="username"
                         onChange={(e) => setData("email", e.target.value)}
+                        placeholder="Email"
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
+                <div>
                     <TextInput
+                        label="Password Baru"
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full rounded-xl"
                         autoComplete="new-password"
                         isFocused={true}
                         onChange={(e) => setData("password", e.target.value)}
+                        placeholder="Password Baru"
                     />
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
+                <div>
                     <TextInput
+                        label="Konfirmasi Password"
+                        id="password_confirmation"
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
+                        className="block w-full rounded-xl"
                         autoComplete="new-password"
                         onChange={(e) =>
                             setData("password_confirmation", e.target.value)
                         }
+                        placeholder="Konfirmasi Password"
                     />
 
                     <InputError
@@ -89,18 +91,26 @@ export default function ResetPassword({ token, email }) {
                     />
                 </div>
 
-                <div className="mt-4">
-                    {processing ? (
-                        <Loading />
-                    ) : (
-                        <Button
-                            variant={"primary"}
-                            text={"Reset Password"}
-                            className="w-full"
-                        />
-                    )}
+                {processing ? (
+                    <Loading />
+                ) : (
+                    <Button
+                        variant={"primary"}
+                        text={"Reset Password"}
+                        className="w-full rounded-xl"
+                    />
+                )}
+
+                <div className="flex justify-end">
+                    <Link
+                        href={route("login")}
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                    >
+                        Kembali ke Login
+                    </Link>
                 </div>
             </form>
-        </GuestLayout>
+        </div>
     );
 }
+
