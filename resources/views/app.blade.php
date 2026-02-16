@@ -20,14 +20,13 @@
     @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
     @inertiaHead
     <style>
-        /* NOTE: Typical mobile logical widths are ~360–430px. We lock at 420px for consistent mobile look on desktop. */
+        /* Mobile-first: width adapts to device, capped at 420px for desktop */
         .app-container {
-            max-width: 420px; /* lock to mobile width even on desktop */
+            max-width: 420px; /* cap width for mobile look on desktop */
             width: 100%;
-            min-width: 420px; /* ensure consistent width across pages */
-            margin: 0 auto;    /* center on wider screens */
-            /* padding: 0;        horizontal breathing room */
+            margin: 0 auto;   /* center on wider screens */
             background: #f5f5f5;
+            box-sizing: border-box;
         }
 
         html, body {
@@ -36,6 +35,7 @@
             display: flex;
             justify-content: center;
             background: #f5f5f5;
+            overflow-x: hidden; /* prevent any accidental horizontal scroll */
         }
 
         /* Allow sections that need to be full-bleed */

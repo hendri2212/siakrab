@@ -95,6 +95,16 @@ export default function ProductsManagement({ auth, listProductsUMKM, pelakuUMKM 
     function handleStore(e) {
         e.preventDefault();
 
+        if (data.nama.includes("/")) {
+            toast.error("Nama produk tidak boleh mengandung karakter garis miring (/).");
+            return;
+        }
+
+        if (!data.harga_fix || data.harga_fix.replace(/\./g, "") === "" || data.harga_fix.replace(/\./g, "") === "0") {
+            toast.error("Harga produk wajib diisi.");
+            return;
+        }
+
         transform((data) => ({
             ...data,
             harga_fix: data.harga_fix.replace(/\./g, ""),

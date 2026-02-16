@@ -33,6 +33,7 @@ import TextInput from "@/Components/TextInput";
 import { columns } from "./Columns";
 
 export function DataTable({ data }) {
+    const tableData = React.useMemo(() => (Array.isArray(data) ? data : []), [data]);
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
     const [expandedId, setExpandedId] = React.useState(null);
@@ -43,9 +44,10 @@ export function DataTable({ data }) {
         pageIndex: 0,
         pageSize: 10,
     });
+    const isInitialGlobalFilterRender = React.useRef(true);
 
     const table = useReactTable({
-        data,
+        data: tableData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -55,7 +57,7 @@ export function DataTable({ data }) {
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChanged: setGlobalFilter,
+        onGlobalFilterChange: setGlobalFilter,
         onPaginationChange: setPagination,
         state: {
             sorting,
@@ -66,6 +68,14 @@ export function DataTable({ data }) {
             pagination,
         },
     });
+
+    React.useEffect(() => {
+        if (isInitialGlobalFilterRender.current) {
+            isInitialGlobalFilterRender.current = false;
+            return;
+        }
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }, [globalFilter]);
 
     const handleVerify = (status, userId) => {
         const role = status === "Terima" ? "umkmAdmin" : "rejected";
@@ -103,8 +113,23 @@ export function DataTable({ data }) {
         );
     };
 
+    const totalRows = table.getPrePaginationRowModel().rows.length;
+    const filteredRows = table.getFilteredRowModel().rows.length;
+    const currentRows = table.getRowModel().rows.length;
+    const totalPages = Math.max(table.getPageCount(), 1);
+    const currentPage = Math.min(
+        table.getState().pagination.pageIndex + 1,
+        totalPages
+    );
+    const pageSize = table.getState().pagination.pageSize;
+    const startRow = filteredRows === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+    const endRow =
+        filteredRows === 0
+            ? 0
+            : Math.min(startRow + currentRows - 1, filteredRows);
+
     return (
-        <div className="w-full space-y-4">
+        <div className="w-full max-w-none space-y-4">
             <div className="flex items-center justify-between py-4">
                 <div className="w-full md:w-[20rem]">
                     <TextInput
@@ -149,12 +174,12 @@ export function DataTable({ data }) {
             </div>
 
             {/* Card View (Mobile & Desktop) */}
-            <div className="grid grid-cols-1 gap-4">
+            <div className="w-full flex flex-col gap-4">
                 {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                         <div
                             key={row.id}
-                            className={`p-4 border rounded-xl bg-white shadow-sm flex flex-col gap-3 cursor-pointer transition-all active:scale-[0.99] touch-manipulation ${row.original.id === expandedId
+                            className={`block w-full min-w-0 p-4 border rounded-xl bg-white shadow-sm flex flex-col gap-3 cursor-pointer transition-all active:scale-[0.99] touch-manipulation ${row.original.id === expandedId
                                 ? "ring-2 ring-primary border-primary bg-blue-50/30"
                                 : "hover:border-gray-300"
                                 }`}
@@ -429,11 +454,8 @@ export function DataTable({ data }) {
 
             <div className="flex items-center justify-between sm:justify-end gap-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    <span className="hidden sm:inline">
-                        Page {table.getState().pagination.pageIndex + 1} of{" "}
-                        {table.getPageCount()} |{" "}
-                    </span>
-                    Total {table.getFilteredRowModel().rows.length} rows
+                    Page {currentPage}/{totalPages} | Show {startRow}-{endRow} of {filteredRows}
+                    {filteredRows !== totalRows ? ` (total ${totalRows})` : ""}
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button

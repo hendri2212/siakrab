@@ -25,9 +25,13 @@ class ProductController extends Controller
         $validatedData = $req->validate([
             'kategori' => 'required',
             'thumbnail' => 'required|image|max:2048',
-            'nama' => 'required',
+            'nama' => ['required', 'regex:/^[^\/]*$/'],
             'deskripsi' => 'required',
+            'harga_fix' => 'required|numeric',
             'images' => 'max:2048',
+        ], [
+            'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+            'harga_fix.required' => 'Harga produk wajib diisi.',
         ]);
 
         $file = $req->file('thumbnail');
@@ -46,7 +50,7 @@ class ProductController extends Controller
             'deskripsi' => $validatedData['deskripsi'],
             'harga_start' => $req->harga_start,
             'harga_end' => $req->harga_end,
-            'harga_fix' => $req->harga_fix,
+            'harga_fix' => $validatedData['harga_fix'],
             'pelaku_umkm_id' => $pelakuUMKM->id
         ]);
 
@@ -66,16 +70,22 @@ class ProductController extends Controller
             $product->update(['images' => json_encode($imagesArray)]);
         }
 
-        return redirect()->back();
+        return redirect()->route('product.show', [
+            'page' => $this->resolvePageFromRequest($req),
+        ]);
     }
 
     public function update(Request $req, $id)
     {
         $validatedData = $req->validate([
             'kategori' => 'required',
-            'nama' => 'required',
+            'nama' => ['required', 'regex:/^[^\/]*$/'],
             'deskripsi' => 'required',
+            'harga_fix' => 'required|numeric',
             'images' => 'max:2048',
+        ], [
+            'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+            'harga_fix.required' => 'Harga produk wajib diisi.',
         ]);
 
         $product = ProductUMKM::findOrFail($id);
@@ -110,9 +120,13 @@ class ProductController extends Controller
             $validatedData = $req->validate([
                 'kategori' => 'required',
                 'thumbnail' => 'required|image|max:2048',
-                'nama' => 'required',
+                'nama' => ['required', 'regex:/^[^\/]*$/'],
                 'deskripsi' => 'required',
+                'harga_fix' => 'required|numeric',
                 'images' => 'max:2048',
+            ], [
+                'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+                'harga_fix.required' => 'Harga produk wajib diisi.',
             ]);
             $file = $req->file('thumbnail');
             $fileName = $file->getClientOriginalName();
@@ -131,7 +145,7 @@ class ProductController extends Controller
             'deskripsi' => $validatedData['deskripsi'],
             'harga_start' => $req->harga_start,
             'harga_end' => $req->harga_end,
-            'harga_fix' => $req->harga_fix,
+            'harga_fix' => $validatedData['harga_fix'],
             'pelaku_umkm_id' => $product->pelaku_umkm_id
         ]);
 
@@ -150,7 +164,9 @@ class ProductController extends Controller
             $product->update(['images' => json_encode($imagesArray)]);
         }
 
-        return redirect()->back();
+        return redirect()->route('product.show', [
+            'page' => $this->resolvePageFromRequest($req),
+        ]);
     }
 
     public function delete($id)
@@ -180,5 +196,22 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->back();
+    }
+
+    private function resolvePageFromRequest(Request $req): int
+    {
+        $page = (int) $req->input('page', $req->query('page', 0));
+
+        if ($page < 1) {
+            $previousQuery = parse_url(url()->previous(), PHP_URL_QUERY);
+            $previousParams = [];
+
+            if (is_string($previousQuery) && $previousQuery !== '') {
+                parse_str($previousQuery, $previousParams);
+                $page = (int) ($previousParams['page'] ?? 0);
+            }
+        }
+
+        return max($page, 1);
     }
 }

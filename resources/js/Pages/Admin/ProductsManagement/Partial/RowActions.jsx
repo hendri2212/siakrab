@@ -37,12 +37,13 @@ export default function RowActions({ row, inline = false }) {
     const product = row.original;
 
     const [showModal, setShowModal] = useState(false);
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         kategori: "",
         thumbnail: null,
         nama: "",
         deskripsi: "",
         harga_fix: "",
+        page: 1,
         detail: {},
     });
     const [selectedKategori, setSelectedKategori] = useState("Pilih Kategori");
@@ -119,19 +120,48 @@ export default function RowActions({ row, inline = false }) {
     function handleUpdate(e) {
         e.preventDefault();
 
+        if (data.nama.includes("/")) {
+            toast.error("Nama produk tidak boleh mengandung karakter garis miring (/).");
+            return;
+        }
+
+        if (!data.harga_fix) {
+            toast.error("Harga produk wajib diisi.");
+            return;
+        }
+
+        const pageParam =
+            typeof window !== "undefined"
+                ? Number(new URLSearchParams(window.location.search).get("page"))
+                : 1;
+        const currentPage =
+            Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+
+        transform((formData) => ({
+            ...formData,
+            page: currentPage,
+        }));
+
         post(route("product.update", product.id), {
+            preserveState: true,
+            preserveScroll: true,
             onSuccess: () => {
                 toast.success("Berhasil memperbarui data produk.");
                 setShowModal(false);
                 setSelectedKategori("Pilih Kategori");
                 setThumbnail(null);
-                setImageName("");
-                setHargaType("");
+                setThumbnailName("");
+                setImages([]);
+                setImagesName([]);
+                reset();
             },
             onError: (error) => {
                 toast.error("Gagal memperbarui data produk.");
                 console.log(error);
                 console.log(errors);
+            },
+            onFinish: () => {
+                transform((formData) => formData);
             },
         });
     }

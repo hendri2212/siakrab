@@ -32,9 +32,13 @@ class ProductUMKMController extends Controller
         $validatedData = $req->validate([
             'kategori' => 'required',
             'thumbnail' => 'required|image|max:2048',
-            'nama' => 'required',
+            'nama' => ['required', 'regex:/^[^\/]*$/'],
             'deskripsi' => 'required',
+            'harga_fix' => 'required|numeric',
             'images' => 'max:2048',
+        ], [
+            'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+            'harga_fix.required' => 'Harga produk wajib diisi.',
         ]);
 
         $file = $req->file('thumbnail');
@@ -53,7 +57,7 @@ class ProductUMKMController extends Controller
             'deskripsi' => $validatedData['deskripsi'],
             'harga_start' => $req->harga_start,
             'harga_end' => $req->harga_end,
-            'harga_fix' => $req->harga_fix,
+            'harga_fix' => $validatedData['harga_fix'],
             'pelaku_umkm_id' => $pelakuUMKM->id
         ]);
 
@@ -80,9 +84,13 @@ class ProductUMKMController extends Controller
     public function update(Request $req, $id) {
         $validatedData = $req->validate([
             'kategori' => 'required',
-            'nama' => 'required',
+            'nama' => ['required', 'regex:/^[^\/]*$/'],
             'deskripsi' => 'required',
+            'harga_fix' => 'required|numeric',
             'images' => 'max:2048',
+        ], [
+            'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+            'harga_fix.required' => 'Harga produk wajib diisi.',
         ]);
 
         $product = ProductUMKM::findOrFail($id);
@@ -117,9 +125,13 @@ class ProductUMKMController extends Controller
             $validatedData = $req->validate([
                 'kategori' => 'required',
                 'thumbnail' => 'required|image|max:2048',
-                'nama' => 'required',
+                'nama' => ['required', 'regex:/^[^\/]*$/'],
                 'deskripsi' => 'required',
+                'harga_fix' => 'required|numeric',
                 'images' => 'max:2048',
+            ], [
+                'nama.regex' => 'Nama produk tidak boleh mengandung karakter garis miring (/).',
+                'harga_fix.required' => 'Harga produk wajib diisi.',
             ]);
             $file = $req->file('thumbnail');
             $fileName = $file->getClientOriginalName();
@@ -141,7 +153,7 @@ class ProductUMKMController extends Controller
             'deskripsi' => $validatedData['deskripsi'],
             'harga_start' => $req->harga_start,
             'harga_end' => $req->harga_end,
-            'harga_fix' => $req->harga_fix,
+            'harga_fix' => $validatedData['harga_fix'],
             'pelaku_umkm_id' => $pelakuUMKM->id
         ]);
 

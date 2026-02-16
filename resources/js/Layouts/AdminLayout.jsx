@@ -10,11 +10,12 @@ import {
     MdMoreHoriz,
     MdClose,
 } from "react-icons/md";
-import { IoNewspaper } from "react-icons/io5";
+import { IoNewspaper, IoHome } from "react-icons/io5";
 import { FaStore, FaUser } from "react-icons/fa";
 import { MdViewCarousel } from "react-icons/md";
 
 const navItems = [
+    { name: "Public", path: "/", icon: <IoHome size={22} /> },
     { name: "Dashboard", path: "/admin/dashboard", icon: <MdDashboard size={22} /> },
     { name: "Verifikasi", path: "/admin/verify-umkm", icon: <MdVerified size={22} /> },
     { name: "Produk", path: "/admin/products-management", icon: <FaStore size={22} /> },
@@ -23,7 +24,13 @@ const navItems = [
     { name: "Galeri", path: "/admin/gallery-management", icon: <MdCameraAlt size={22} /> },
     { name: "Carousel", path: "/admin/carousel-management", icon: <MdViewCarousel size={22} /> },
     { name: "Profil", path: "/profile", icon: <FaUser size={22} /> },
-    { name: "Logout", path: "/logout", icon: <MdLogout size={22} />, method: "post" },
+    {
+        name: "Logout",
+        path: "/logout",
+        icon: <MdLogout size={22} />,
+        method: "post",
+        data: { redirect_to: "/" },
+    },
 ];
 
 // Tampilkan maksimal 4 item utama + 1 tombol "Lainnya" di bottom nav
@@ -65,7 +72,10 @@ export default function AdminLayout({ children, cta }) {
         .replace(/-/g, " ")
         .replace(/\b\w/g, (c) => c.toUpperCase());
 
-    const isActive = (currentUrl, itemPath) => currentUrl.startsWith(itemPath);
+    const isActive = (currentUrl, itemPath) => {
+        if (itemPath === "/") return false;
+        return currentUrl.startsWith(itemPath);
+    };
 
     const colsClass = "grid-cols-5"; // 4 menu utama + 1 tombol Lainnya
 
@@ -103,6 +113,7 @@ export default function AdminLayout({ children, cta }) {
                                 key={item.path}
                                 href={item.path}
                                 method={item.method || undefined}
+                                data={item.data || undefined}
                                 as={item.method ? "button" : undefined}
                                 aria-current={active ? "page" : undefined}
                                 className={`flex flex-col items-center justify-center py-3 text-xs ${active ? "text-blue-600 font-semibold" : "text-gray-600"}`}
@@ -174,6 +185,7 @@ export default function AdminLayout({ children, cta }) {
                                         key={item.path}
                                         href={item.path}
                                         method={item.method}
+                                        data={item.data || undefined}
                                         as="button"
                                         onClick={() => setShowMore(false)}
                                         className=""

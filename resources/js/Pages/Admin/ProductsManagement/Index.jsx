@@ -82,6 +82,26 @@ export default function ProductsManagement({ auth, listProductsUMKM }) {
     function handleStore(e) {
         e.preventDefault();
 
+        if (data.nama.includes("/")) {
+            toast.error("Nama produk tidak boleh mengandung karakter garis miring (/).");
+            return;
+        }
+
+        if (hargaType === "") {
+            toast.error("Harga produk wajib diisi. Pilih tipe harga terlebih dahulu.");
+            return;
+        }
+
+        if (hargaType === "fix" && !data.harga_fix) {
+            toast.error("Harga produk wajib diisi.");
+            return;
+        }
+
+        if (hargaType === "range" && (!data.harga_start || !data.harga_end)) {
+            toast.error("Harga range (dari & hingga) wajib diisi.");
+            return;
+        }
+
         post(route("productUMKM.store"), {
             onSuccess: () => {
                 toast.success("Berhasil menyimpan data produk.");

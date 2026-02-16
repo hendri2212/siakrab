@@ -25,6 +25,7 @@ import { getColumns } from "./Columns";
 import RowActions from "./RowActions";
 
 export function DataTable({ data }) {
+    const tableData = React.useMemo(() => (Array.isArray(data) ? data : []), [data]);
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
     const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -61,10 +62,22 @@ export function DataTable({ data }) {
     // State untuk image modal
     const [selectedImage, setSelectedImage] = React.useState(null);
     const [showImageModal, setShowImageModal] = React.useState(false);
-    const [pagination, setPagination] = React.useState({
-        pageIndex: 0,
-        pageSize: 24,
+    const [pagination, setPagination] = React.useState(() => {
+        if (typeof window === "undefined") {
+            return { pageIndex: 0, pageSize: 24 };
+        }
+
+        const pageFromQuery = Number(
+            new URLSearchParams(window.location.search).get("page")
+        );
+        const initialPageIndex =
+            Number.isFinite(pageFromQuery) && pageFromQuery > 0
+                ? pageFromQuery - 1
+                : 0;
+
+        return { pageIndex: initialPageIndex, pageSize: 24 };
     });
+    const isInitialGlobalFilterRender = React.useRef(true);
 
     const handleImageClick = (imageUrl) => {
         setSelectedImage(imageUrl);
@@ -82,7 +95,7 @@ export function DataTable({ data }) {
     );
 
     const table = useReactTable({
-        data,
+        data: tableData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -93,9 +106,10 @@ export function DataTable({ data }) {
         getExpandedRowModel: getExpandedRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        onGlobalFilterChanged: setGlobalFilter,
+        onGlobalFilterChange: setGlobalFilter,
         onPaginationChange: setPagination,
         onExpandedChange: setExpanded,
+        autoResetPageIndex: false,
         state: {
             sorting,
             columnFilters,
@@ -106,6 +120,23 @@ export function DataTable({ data }) {
             expanded,
         },
     });
+
+    React.useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const params = new URLSearchParams(window.location.search);
+        params.set("page", String(pagination.pageIndex + 1));
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, "", newUrl);
+    }, [pagination.pageIndex]);
+
+    React.useEffect(() => {
+        if (isInitialGlobalFilterRender.current) {
+            isInitialGlobalFilterRender.current = false;
+            return;
+        }
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }, [globalFilter]);
 
     // Format Rupiah Helper
     const formatRupiah = (number) => {
@@ -122,6 +153,18 @@ export function DataTable({ data }) {
         if (words.length <= limit) return text;
         return `${words.slice(0, limit).join(" ")}...`;
     };
+
+    const totalRows = table.getPrePaginationRowModel().rows.length;
+    const filteredRows = table.getFilteredRowModel().rows.length;
+    const currentRows = table.getRowModel().rows.length;
+    const totalPages = Math.max(table.getPageCount(), 1);
+    const currentPage = Math.min(
+        table.getState().pagination.pageIndex + 1,
+        totalPages
+    );
+    const pageSize = table.getState().pagination.pageSize;
+    const startRow = filteredRows === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+    const endRow = filteredRows === 0 ? 0 : Math.min(startRow + currentRows - 1, filteredRows);
 
     return (
         <div className="w-full space-y-4">
@@ -346,11 +389,8 @@ export function DataTable({ data }) {
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    <span className="hidden sm:inline">
-                        Page {table.getState().pagination.pageIndex + 1} of{" "}
-                        {table.getPageCount()} |{" "}
-                    </span>
-                    Total {table.getFilteredRowModel().rows.length} rows
+                    Page {currentPage}/{totalPages} | Show {startRow}-{endRow} of {filteredRows}
+                    {filteredRows !== totalRows ? ` (total ${totalRows})` : ""}
                 </div>
                 <div className="space-x-2">
                     <Button

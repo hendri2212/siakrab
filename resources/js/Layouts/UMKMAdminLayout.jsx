@@ -3,8 +3,14 @@ import { useEffect, useState, useCallback } from "react";
 
 import { MdDashboard, MdLogout, MdMoreHoriz, MdClose } from "react-icons/md";
 import { FaStore, FaUser, FaHeart, FaBookmark } from "react-icons/fa";
+import { IoHome } from "react-icons/io5";
 
 const sidebarItems = [
+    {
+        name: "Public",
+        path: "/",
+        icon: <IoHome size={22} />,
+    },
     {
         name: "Dashboard",
         path: "/umkm-admin/dashboard",
@@ -35,10 +41,16 @@ const sidebarItems = [
         path: "/logout",
         icon: <MdLogout size={22} />,
         method: "post",
+        data: { redirect_to: "/" },
     },
 ];
 
 const sidebarItems2 = [
+    {
+        name: "Public",
+        path: "/",
+        icon: <IoHome size={22} />,
+    },
     {
         name: "Dashboard",
         path: "/umkm-admin/dashboard",
@@ -54,6 +66,7 @@ const sidebarItems2 = [
         path: "/logout",
         icon: <MdLogout size={22} />,
         method: "post",
+        data: { redirect_to: "/" },
     },
 ];
 
@@ -97,7 +110,10 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
     const primaryItems = allItems.slice(0, 4);
     const secondaryItems = allItems.slice(4);
 
-    const isActive = (currentUrl, itemPath) => currentUrl.startsWith(itemPath);
+    const isActive = (currentUrl, itemPath) => {
+        if (itemPath === "/") return false;
+        return currentUrl.startsWith(itemPath);
+    };
 
     const colsClass = "grid-cols-5"; // 4 menu utama + 1 tombol Lainnya
 
@@ -135,6 +151,7 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
                                 key={item.path}
                                 href={item.path}
                                 method={item.method || undefined}
+                                data={item.data || undefined}
                                 as={item.method ? "button" : undefined}
                                 aria-current={active ? "page" : undefined}
                                 className={`flex flex-col items-center justify-center py-3 text-xs ${active ? "text-blue-600 font-semibold" : "text-gray-600"}`}
@@ -208,6 +225,7 @@ export default function UMKMAdminLayout({ auth, children, cta }) {
                                         key={item.path}
                                         href={item.path}
                                         method={item.method}
+                                        data={item.data || undefined}
                                         as="button"
                                         onClick={() => setShowMore(false)}
                                         className=""

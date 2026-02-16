@@ -122,6 +122,16 @@ export default function RowActions({ row }) {
     function handleUpdate(e) {
         e.preventDefault();
 
+        if (data.nama.includes("/")) {
+            toast.error("Nama produk tidak boleh mengandung karakter garis miring (/).");
+            return;
+        }
+
+        if (!data.harga_fix) {
+            toast.error("Harga produk wajib diisi.");
+            return;
+        }
+
         post(route("productUMKM.update", product.id), {
             onSuccess: () => {
                 toast.success("Berhasil memperbarui data produk.");

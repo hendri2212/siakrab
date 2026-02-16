@@ -11,7 +11,7 @@ export default function VerifyUMKM({ listPelakuUMKM }) {
                 </a>
             }
         >
-            <div className="overflow-auto">
+            <div className="w-full">
                 <DataTable data={listPelakuUMKM} />
             </div>
         </AdminLayout>

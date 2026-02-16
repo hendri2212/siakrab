@@ -9,12 +9,20 @@ import {
     MdClose,
 } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
+import { IoHome } from "react-icons/io5";
 
 const navItems = [
+    { name: "Public", path: "/", icon: <IoHome size={22} /> },
     { name: "Dashboard", path: "/super-admin/dashboard", icon: <MdDashboard size={22} /> },
     { name: "Akun", path: "/super-admin/accounts-management", icon: <MdManageAccounts size={22} /> },
     { name: "Profil", path: "/profile", icon: <FaUser size={22} /> },
-    { name: "Logout", path: "/logout", icon: <MdLogout size={22} />, method: "post" },
+    {
+        name: "Logout",
+        path: "/logout",
+        icon: <MdLogout size={22} />,
+        method: "post",
+        data: { redirect_to: "/" },
+    },
 ];
 
 // Tampilkan maksimal 4 item utama di bottom nav
@@ -56,7 +64,10 @@ export default function SuperAdminLayout({ children, cta }) {
         .replace(/-/g, " ")
         .replace(/\b\w/g, (c) => c.toUpperCase());
 
-    const isActive = (currentUrl, itemPath) => currentUrl.startsWith(itemPath);
+    const isActive = (currentUrl, itemPath) => {
+        if (itemPath === "/") return false;
+        return currentUrl.startsWith(itemPath);
+    };
 
     const colsClass = "grid-cols-5"; // 4 menu utama + 1 tombol Lainnya
 
@@ -94,6 +105,7 @@ export default function SuperAdminLayout({ children, cta }) {
                                 key={item.path}
                                 href={item.path}
                                 method={item.method || undefined}
+                                data={item.data || undefined}
                                 as={item.method ? "button" : undefined}
                                 aria-current={active ? "page" : undefined}
                                 className={`flex flex-col items-center justify-center py-3 text-xs ${active ? "text-blue-600 font-semibold" : "text-gray-600"}`}
@@ -167,6 +179,7 @@ export default function SuperAdminLayout({ children, cta }) {
                                         key={item.path}
                                         href={item.path}
                                         method={item.method}
+                                        data={item.data || undefined}
                                         as="button"
                                         onClick={() => setShowMore(false)}
                                         className=""
